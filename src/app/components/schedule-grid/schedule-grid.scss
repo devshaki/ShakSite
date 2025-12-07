@@ -103,9 +103,21 @@
       padding: 0.75rem;
       border-bottom: 1px solid var(--ctp-surface1);
       transition: all 0.2s ease;
+      height: 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
       &:last-child {
         border-bottom: none;
+      }
+
+      &.empty {
+        background: transparent;
+        border-left: none !important;
+        border-bottom: 1px solid transparent;
+        pointer-events: none;
+        visibility: hidden;
       }
 
       .slot-label {

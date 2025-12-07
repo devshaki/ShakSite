@@ -42,29 +42,48 @@ export class ScheduleService {
   }
 
   private buildDisplaySlots(group: Group, daySchedule: { day: DayOfWeek; classes: ScheduleEntry[] }): DisplaySlot[] {
+    const template = this.timetable.periodTemplates.find((t: any) => t.id === group.templateId);
+    if (!template) return [];
+    
+    // Create a map of scheduled classes by period ID
+    const scheduledMap = new Map<string, ScheduleEntry>();
+    for (const entry of daySchedule.classes) {
+      scheduledMap.set(entry.periodId, entry);
+    }
+    
     const slots: DisplaySlot[] = [];
     
-    for (const entry of daySchedule.classes) {
-      const period = this.getPeriodFromTemplate(group.templateId, entry.periodId);
-      const classInfo = this.timetable.classes[entry.classId];
+    // Go through all periods in the template to maintain time alignment
+    for (const period of template.periods) {
+      const entry = scheduledMap.get(period.id);
       
-      if (period && classInfo) {
-        // Check if this is a break period (period ID starts with 'B')
-        const isBreak = entry.periodId.startsWith('B') || entry.classId === 'BREAK';
-        
+      if (entry) {
+        const classInfo = this.timetable.classes[entry.classId];
+        if (classInfo) {
+          const isBreak = period.id.startsWith('B') || entry.classId === 'BREAK';
+          
+          slots.push({
+            start: period.start,
+            end: period.end,
+            isBreak: isBreak,
+            label: classInfo.subject,
+            classInfo,
+            room: entry.room,
+            notes: entry.notes
+          });
+        }
+      } else {
+        // Add empty slot for alignment
         slots.push({
           start: period.start,
           end: period.end,
-          isBreak: isBreak,
-          label: classInfo.subject,
-          classInfo,
-          room: entry.room,
-          notes: entry.notes
+          isBreak: false,
+          label: ''
         });
       }
     }
     
-    return slots.sort((a, b) => a.start.localeCompare(b.start));
+    return slots;
   }
 
   private getDisplaySchedule(groupId: string): DisplayDay[] {

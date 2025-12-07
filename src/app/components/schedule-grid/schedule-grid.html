@@ -32,12 +32,15 @@
         <div 
           class="time-slot"
           [class.break]="slot.isBreak"
+          [class.empty]="!slot.label"
           [class.current]="isCurrentSlot(day.day, slot)"
-          [style.border-left]="'4px solid ' + getSlotColor(slot)">
-          <div class="slot-label">{{ slot.label }}</div>
-          <div class="slot-time">{{ slot.start }} - {{ slot.end }}</div>
-          @if (getSlotDetails(slot)) {
-            <div class="slot-details">{{ getSlotDetails(slot) }}</div>
+          [style.border-left]="slot.label ? '4px solid ' + getSlotColor(slot) : 'none'">
+          @if (slot.label) {
+            <div class="slot-label">{{ slot.label }}</div>
+            <div class="slot-time">{{ slot.start }} - {{ slot.end }}</div>
+            @if (getSlotDetails(slot)) {
+              <div class="slot-details">{{ getSlotDetails(slot) }}</div>
+            }
           }
         </div>
       }
