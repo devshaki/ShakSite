@@ -26,7 +26,7 @@ static_sites:
   - name: frontend
     source_dir: frontend
     build_command: npm install && npm run build -- --configuration production
-    output_dir: dist/shak-site/browser
+    output_dir: dist/class-schedule/browser
     catchall_document: index.html
     envs:
       - key: NODE_ENV
