@@ -10,7 +10,7 @@ import {
 import { ExamsService } from './exams.service';
 import { ExamDate } from './exam.interface';
 
-@Controller('api/exams')
+@Controller('exams')
 export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 

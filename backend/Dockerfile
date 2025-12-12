@@ -1,22 +1,35 @@
-# Backend Dockerfile
+# Multi-stage build: Build frontend and backend together
+FROM node:20-alpine AS builder
+
+# Build Frontend
+WORKDIR /frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build -- --configuration production
+
+# Build Backend
+WORKDIR /backend
+COPY backend/package*.json ./
+RUN npm install
+COPY backend/ ./
+RUN npm run build
+
+# Production stage
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy backend build
+COPY --from=builder /backend/dist ./dist
+COPY --from=builder /backend/package*.json ./
+COPY --from=builder /backend/node_modules ./node_modules
 
-# Install ALL dependencies (including dev deps needed for build)
-RUN npm install
+# Copy frontend build into backend structure
+COPY --from=builder /frontend/dist/shak-site/browser ./frontend/dist/shak-site/browser
 
-# Copy source code
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Remove dev dependencies after build
-RUN npm prune --omit=dev
+# Create uploads directory
+RUN mkdir -p uploads/memes data
 
 # Expose port
 EXPOSE 3000

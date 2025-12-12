@@ -4,6 +4,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Set global API prefix
+  app.setGlobalPrefix('api');
+
   // Enable CORS - allow frontend origin
   const allowedOrigins =
     process.env.NODE_ENV === 'production'
@@ -22,5 +25,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`🚀 Backend server running on port ${port}`);
+  console.log(`📁 Serving frontend from root`);
+  console.log(`🔌 API available at /api`);
 }
 bootstrap();

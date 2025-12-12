@@ -2,7 +2,7 @@ import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
 import { QuotesService } from './quotes.service';
 import { Quote } from './quote.interface';
 
-@Controller('api/quotes')
+@Controller('quotes')
 export class QuotesController {
   constructor(private readonly quotesService: QuotesService) {}
 

@@ -14,7 +14,7 @@ import { extname } from 'path';
 import { MemesService } from './memes.service';
 import { Meme } from './meme.interface';
 
-@Controller('api/memes')
+@Controller('memes')
 export class MemesController {
   constructor(private readonly memesService: MemesService) {}
 

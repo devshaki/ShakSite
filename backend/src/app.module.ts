@@ -8,6 +8,12 @@ import { MemesModule } from './memes/memes.module';
 
 @Module({
   imports: [
+    // Serve frontend static files (Angular build)
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'frontend', 'dist', 'shak-site', 'browser'),
+      exclude: ['/api*', '/uploads*'],
+    }),
+    // Serve uploaded files
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
