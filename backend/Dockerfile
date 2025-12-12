@@ -1,18 +1,14 @@
-# Multi-stage build: Build frontend and backend together
-FROM node:20-alpine AS builder
+# Backend Dockerfile - Works when backend is the build context
+# Since DigitalOcean is using backend as source_dir, we need to adjust
 
-# Build Frontend
-WORKDIR /frontend
-COPY frontend/package*.json ./
-RUN npm install
-COPY frontend/ ./
-RUN npm run build -- --configuration production
+FROM node:20-alpine AS backend-builder
 
-# Build Backend
-WORKDIR /backend
-COPY backend/package*.json ./
+WORKDIR /app
+
+# Copy backend files
+COPY package*.json ./
 RUN npm install
-COPY backend/ ./
+COPY . .
 RUN npm run build
 
 # Production stage
@@ -20,16 +16,16 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy backend build
-COPY --from=builder /backend/dist ./dist
-COPY --from=builder /backend/package*.json ./
-COPY --from=builder /backend/node_modules ./node_modules
+# Copy backend build and dependencies
+COPY --from=backend-builder /app/dist ./dist
+COPY --from=backend-builder /app/package*.json ./
+COPY --from=backend-builder /app/node_modules ./node_modules
 
-# Copy frontend build into backend structure
-COPY --from=builder /frontend/dist/shak-site/browser ./frontend/dist/shak-site/browser
-
-# Create uploads directory
+# Create necessary directories
 RUN mkdir -p uploads/memes data
+
+# Note: Frontend static files would need to be added separately
+# For now, this serves API only at /api routes
 
 # Expose port
 EXPOSE 3000

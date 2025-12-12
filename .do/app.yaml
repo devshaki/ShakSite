@@ -1,9 +1,11 @@
 name: shaksite
 region: nyc
+
 services:
-  # Combined Backend + Frontend Service
-  - name: web
+  # Backend API Service
+  - name: backend
     type: web
+    source_dir: backend
     dockerfile_path: Dockerfile
     http_port: 3000
     instance_count: 1
@@ -15,8 +17,22 @@ services:
         value: "3000"
       - key: FRONTEND_URL
         scope: RUN_TIME
-        value: ${APP_URL}
+        value: ${APP_DOMAIN}
     health_check:
       http_path: /api/quotes
     routes:
+      - path: /api
+
+static_sites:
+  # Frontend Static Site
+  - name: frontend
+    source_dir: frontend
+    build_command: npm install && npm run build -- --configuration production
+    output_dir: dist/shak-site/browser
+    routes:
       - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: API_URL
+        value: ${backend.URL}/api
