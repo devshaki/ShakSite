@@ -10,6 +10,8 @@ services:
     http_port: 3000
     instance_count: 1
     instance_size_slug: basic-xxs
+    routes:
+      - path: /api
     envs:
       - key: NODE_ENV
         value: production
@@ -25,9 +27,10 @@ static_sites:
   # Frontend Static Site
   - name: frontend
     source_dir: frontend
-    build_command: npm install && npm run build -- --configuration production
     output_dir: dist/class-schedule/browser
     catchall_document: index.html
+    routes:
+      - path: /
     envs:
       - key: NODE_ENV
         value: production
