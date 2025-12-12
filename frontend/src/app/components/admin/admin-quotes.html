@@ -1,0 +1,48 @@
+<div class="admin-quotes">
+  <h2>ניהול ציטוטים יומיים</h2>
+  
+  <div class="add-quote-section">
+    <h3>הוספת ציטוט חדש</h3>
+    <div class="form-group">
+      <label for="quoteText">טקסט הציטוט:</label>
+      <textarea 
+        id="quoteText"
+        [(ngModel)]="newQuoteText"
+        placeholder="הכנס ציטוט..."
+        rows="3"
+      ></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label for="quoteAuthor">מחבר (אופציונלי):</label>
+      <input 
+        id="quoteAuthor"
+        type="text"
+        [(ngModel)]="newQuoteAuthor"
+        placeholder="שם המחבר"
+      />
+    </div>
+    
+    <button class="btn-add" (click)="addQuote()">הוסף ציטוט</button>
+  </div>
+
+  <div class="quotes-list">
+    <h3>ציטוטים קיימים ({{ quotes().length }})</h3>
+    @if (quotes().length === 0) {
+      <p class="empty-state">עדיין אין ציטוטים מותאמים אישית. הוסף את הראשון!</p>
+    }
+    
+    @for (quote of quotes(); track quote.id) {
+      <div class="quote-item">
+        <div class="quote-content">
+          <p class="quote-text">"{{ quote.text }}"</p>
+          @if (quote.author) {
+            <p class="quote-author">— {{ quote.author }}</p>
+          }
+          <p class="quote-date">נוסף: {{ quote.addedDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <button class="btn-delete" (click)="deleteQuote(quote.id)">מחק</button>
+      </div>
+    }
+  </div>
+</div>

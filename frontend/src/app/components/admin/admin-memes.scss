@@ -1,0 +1,260 @@
+.admin-memes {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h2 {
+    color: var(--text);
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  h3 {
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .upload-section {
+    background: var(--surface0);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    border: 1px solid var(--overlay0);
+
+    .upload-area {
+      margin-bottom: 1.5rem;
+
+      .file-input {
+        display: none;
+      }
+
+      .file-input-label {
+        display: block;
+        cursor: pointer;
+      }
+
+      .file-input-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem;
+        border: 2px dashed var(--overlay1);
+        border-radius: 12px;
+        background: var(--base);
+        transition: all 0.2s;
+
+        &:hover {
+          border-color: var(--blue);
+          background: var(--surface1);
+        }
+
+        .upload-icon {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+        }
+
+        .upload-text {
+          font-size: 1.1rem;
+          color: var(--text);
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+          font-size: 0.9rem;
+          color: var(--subtext0);
+        }
+      }
+
+      .preview-container {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        max-width: 500px;
+        margin: 0 auto;
+
+        .preview-image {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .clear-preview {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          background: var(--red);
+          color: var(--base);
+          border: none;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+
+    .upload-form {
+      .form-group {
+        margin-bottom: 1rem;
+
+        label {
+          display: block;
+          color: var(--subtext1);
+          margin-bottom: 0.5rem;
+          font-weight: 500;
+        }
+
+        input {
+          width: 100%;
+          padding: 0.75rem;
+          border: 1px solid var(--overlay0);
+          border-radius: 8px;
+          background: var(--base);
+          color: var(--text);
+          font-family: inherit;
+          font-size: 1rem;
+
+          &:focus {
+            outline: none;
+            border-color: var(--blue);
+          }
+        }
+      }
+
+      .upload-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+
+        button {
+          border: none;
+          padding: 0.75rem 1.5rem;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        .btn-upload {
+          background: var(--green);
+          color: var(--base);
+        }
+
+        .btn-cancel {
+          background: var(--overlay0);
+          color: var(--text);
+        }
+      }
+    }
+  }
+
+  .memes-grid {
+    .empty-state {
+      text-align: center;
+      color: var(--subtext0);
+      padding: 3rem;
+      background: var(--surface0);
+      border-radius: 12px;
+      font-style: italic;
+      font-size: 1.1rem;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+
+      .meme-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--surface0);
+        border: 1px solid var(--overlay0);
+        transition: all 0.2s;
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+          .meme-overlay {
+            opacity: 1;
+          }
+        }
+
+        .meme-image {
+          width: 100%;
+          height: 300px;
+          object-fit: cover;
+          display: block;
+        }
+
+        .meme-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+          padding: 1rem;
+          opacity: 0;
+          transition: opacity 0.2s;
+
+          .meme-caption {
+            color: white;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+          }
+
+          .meme-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+          }
+
+          .btn-delete-meme {
+            background: var(--red);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+
+            &:hover {
+              background: var(--maroon);
+            }
+          }
+        }
+      }
+    }
+  }
+}

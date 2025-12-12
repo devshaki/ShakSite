@@ -1,0 +1,77 @@
+.admin-panel {
+  min-height: 100vh;
+  background: var(--base);
+
+  .admin-header {
+    background: var(--surface0);
+    border-bottom: 1px solid var(--overlay0);
+    padding: 1.5rem 2rem;
+
+    .header-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      .back-btn {
+        background: var(--surface1);
+        border: 1px solid var(--overlay0);
+        color: var(--text);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: var(--surface2);
+          border-color: var(--blue);
+          color: var(--blue);
+        }
+      }
+
+      .spacer {
+        width: 120px; // Same as back button approximate width for centering
+      }
+    }
+
+    h1 {
+      color: var(--text);
+      margin: 0 0 1rem 0;
+      text-align: center;
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--subtext1);
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: var(--surface1);
+          color: var(--text);
+        }
+
+        &.active {
+          background: var(--blue);
+          color: var(--base);
+        }
+      }
+    }
+  }
+
+  .admin-main {
+    padding: 2rem 0;
+  }
+}

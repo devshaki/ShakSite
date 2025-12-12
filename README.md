@@ -1,52 +1,81 @@
-# ClassSchedule
+# ShakSite - Class Schedule Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+A comprehensive class schedule management system with exam tracking, task management, daily quotes, and meme gallery.
 
-## Development server
+## Project Structure
 
-To start a local development server, run:
-
-```bash
-ng serve
+```
+ShakSite/
+├── frontend/          # Angular application
+├── backend/           # NestJS API server
+├── SETUP.md          # Detailed setup instructions
+└── README.md         # This file
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Quick Start
 
-## Code scaffolding
+### Backend Setup
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+1. Navigate to backend and install dependencies:
 ```bash
-ng generate component component-name
+cd backend
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+2. Start the backend server:
 ```bash
-ng generate --help
+npm run start:dev
+```
+Backend runs on http://localhost:3000
+
+### Frontend Setup
+
+1. Navigate to frontend and install dependencies:
+```bash
+cd frontend
+npm install
 ```
 
-## Building
-
-To build the project run:
-
+2. Start the Angular dev server:
 ```bash
-ng build
+npm start
 ```
+Frontend runs on http://localhost:4200
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Features
 
-## Running unit tests
+- 📅 **Class Schedule** - View weekly timetable with groups A/B
+- ⏰ **Live Timer** - Current period indicator with countdown
+- 📝 **Exam Tracking** - Manage upcoming exams with dates and locations
+- ✅ **Task Management** - Create and track homework/assignments
+- 💬 **Daily Quotes** - Custom rotating quotes system
+- 😂 **Meme Gallery** - Upload and share class memes
+- 🎨 **Catppuccin Themes** - Four beautiful theme variants
+- 🌐 **RTL Support** - Full Hebrew language support
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Tech Stack
 
-```bash
-ng test
-```
+- **Frontend**: Angular 21 with standalone components and signals
+- **Backend**: NestJS with file-based storage
+- **Styling**: SCSS with Catppuccin color scheme
+- **File Upload**: Multer for meme storage
 
-## Running end-to-end tests
+## Admin Panel
 
-For end-to-end (e2e) testing, run:
+Access at http://localhost:4200/admin
+
+- Manage exams and tasks
+- Add custom daily quotes
+- Upload and manage memes
+
+## Documentation
+
+See [SETUP.md](SETUP.md) for detailed setup instructions and API documentation.
+
+## Development
+
+Frontend built with [Angular CLI](https://github.com/angular/angular-cli) version 21.0.2.
+Backend built with [NestJS](https://nestjs.com/) version 10.3.0.
 
 ```bash
 ng e2e
