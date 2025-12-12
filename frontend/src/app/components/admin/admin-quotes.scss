@@ -1,3 +1,48 @@
+.page-container {
+  min-height: 100vh;
+  background: var(--base);
+
+  .page-header {
+    background: var(--surface0);
+    border-bottom: 2px solid var(--overlay0);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    .back-btn {
+      background: var(--surface1);
+      border: 2px solid var(--overlay0);
+      color: var(--text);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background: var(--surface2);
+        border-color: var(--blue);
+        color: var(--blue);
+        transform: translateX(4px);
+      }
+    }
+
+    h1 {
+      color: var(--text);
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .spacer {
+      width: 150px;
+    }
+  }
+}
+
 .admin-quotes {
   padding: 2rem;
   max-width: 900px;

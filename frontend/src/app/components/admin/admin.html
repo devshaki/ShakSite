@@ -7,38 +7,9 @@
       <h1>לוח ניהול</h1>
       <div class="spacer"></div>
     </div>
-    <nav class="admin-tabs">
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab() === 'content'"
-        (click)="setTab('content')"
-      >
-        מבחנים ומטלות
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab() === 'quotes'"
-        (click)="setTab('quotes')"
-      >
-        ציטוטים יומיים
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="activeTab() === 'memes'"
-        (click)="setTab('memes')"
-      >
-        גלריית ממים
-      </button>
-    </nav>
   </header>
 
   <main class="admin-main">
-    @if (activeTab() === 'content') {
-      <app-admin-content />
-    } @else if (activeTab() === 'quotes') {
-      <app-admin-quotes />
-    } @else if (activeTab() === 'memes') {
-      <app-admin-memes />
-    }
+    <app-admin-content />
   </main>
 </div>

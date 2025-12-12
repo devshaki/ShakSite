@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Quote } from '../../models/content.models';
 import { QuotesService } from '../../services/quotes.service';
 
@@ -16,7 +17,7 @@ export class AdminQuotes {
   newQuoteText = signal('');
   newQuoteAuthor = signal('');
 
-  constructor(private quotesService: QuotesService) {
+  constructor(private quotesService: QuotesService, public router: Router) {
     this.loadQuotes();
   }
 

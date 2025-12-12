@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Meme } from '../../models/meme.models';
 import { environment } from '../../../environments/environment';
 
@@ -22,7 +23,7 @@ export class AdminMemes {
 
   private readonly apiUrl = `${environment.apiUrl}/memes`;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, public router: Router) {
     this.loadMemes();
   }
 
@@ -90,9 +91,7 @@ export class AdminMemes {
     this.previewUrl.set(null);
   }
 
-  getMemeUrl(filename: string): string {
-    // In production, uploads are served from /uploads, in dev from localhost:3000
-    const baseUrl = environment.production ? '' : 'http://localhost:3000';
-    return `${baseUrl}/uploads/memes/${filename}`;
+  getMemeUrl(filename: string): string {{
+    return `/uploads/memes/${filename}`;
   }
 }
