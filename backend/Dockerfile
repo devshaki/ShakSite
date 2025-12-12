@@ -30,7 +30,7 @@ COPY --from=backend-builder /backend/package*.json ./
 COPY --from=backend-builder /backend/node_modules ./node_modules
 
 # Copy frontend build to public folder (served by NestJS)
-COPY --from=frontend-builder /frontend/dist/shak-site/browser ./public
+COPY --from=frontend-builder /frontend/dist/class-schedule/browser ./public
 
 # Create necessary directories
 RUN mkdir -p uploads/memes data
