@@ -91,7 +91,7 @@ export class AdminMemes {
     this.previewUrl.set(null);
   }
 
-  getMemeUrl(filename: string): string {{
+  getMemeUrl(filename: string): string {
     return `/uploads/memes/${filename}`;
   }
 }
