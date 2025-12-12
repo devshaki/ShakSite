@@ -29,11 +29,14 @@ COPY --from=backend-builder /backend/dist ./dist
 COPY --from=backend-builder /backend/package*.json ./
 COPY --from=backend-builder /backend/node_modules ./node_modules
 
-# Copy frontend build
-COPY --from=frontend-builder /frontend/dist/shak-site/browser ./frontend/dist/shak-site/browser
+# Copy frontend build to public folder (served by NestJS)
+COPY --from=frontend-builder /frontend/dist/shak-site/browser ./public
 
 # Create necessary directories
 RUN mkdir -p uploads/memes data
+
+# Set production environment
+ENV NODE_ENV=production
 
 # Expose port
 EXPOSE 3000

@@ -10,45 +10,42 @@ import { TasksService } from '../../services/tasks.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-content.html',
-  styleUrl: './admin-content.scss'
+  styleUrl: './admin-content.scss',
 })
 export class AdminContent {
   exams = signal<ExamDate[]>([]);
   tasks = signal<Task[]>([]);
-  
+
   // Exam form
   newExamSubject = signal('');
   newExamDate = signal('');
   newExamTime = signal('');
   newExamRoom = signal('');
   newExamNotes = signal('');
-  
+
   // Task form
   newTaskTitle = signal('');
   newTaskDescription = signal('');
   newTaskDueDate = signal('');
   newTaskSubject = signal('');
   newTaskPriority = signal<'low' | 'medium' | 'high'>('medium');
-  
+
   editingExamId = signal<string | null>(null);
   editingTaskId = signal<string | null>(null);
 
-  constructor(
-    private examsService: ExamsService,
-    private tasksService: TasksService
-  ) {
+  constructor(private examsService: ExamsService, private tasksService: TasksService) {
     this.loadData();
   }
 
   loadData() {
     this.examsService.getAll().subscribe({
       next: (exams) => this.exams.set(exams),
-      error: (err) => console.error('Failed to load exams:', err)
+      error: (err) => console.error('Failed to load exams:', err),
     });
 
     this.tasksService.getAll().subscribe({
       next: (tasks) => this.tasks.set(tasks),
-      error: (err) => console.error('Failed to load tasks:', err)
+      error: (err) => console.error('Failed to load tasks:', err),
     });
   }
 
@@ -56,7 +53,7 @@ export class AdminContent {
   addExam() {
     const subject = this.newExamSubject().trim();
     const date = this.newExamDate().trim();
-    
+
     if (!subject || !date) return;
 
     const newExam = {
@@ -69,10 +66,10 @@ export class AdminContent {
 
     this.examsService.create(newExam).subscribe({
       next: (exam) => {
-        this.exams.update(exams => [...exams, exam]);
+        this.exams.update((exams) => [...exams, exam]);
         this.clearExamForm();
       },
-      error: (err) => console.error('Failed to add exam:', err)
+      error: (err) => console.error('Failed to add exam:', err),
     });
   }
 
@@ -99,21 +96,19 @@ export class AdminContent {
 
     this.examsService.update(examId, updatedData).subscribe({
       next: (exam) => {
-        this.exams.update(exams => 
-          exams.map(e => e.id === examId ? exam : e)
-        );
+        this.exams.update((exams) => exams.map((e) => (e.id === examId ? exam : e)));
         this.clearExamForm();
       },
-      error: (err) => console.error('Failed to update exam:', err)
+      error: (err) => console.error('Failed to update exam:', err),
     });
   }
 
   deleteExam(id: string) {
     this.examsService.delete(id).subscribe({
       next: () => {
-        this.exams.update(exams => exams.filter(e => e.id !== id));
+        this.exams.update((exams) => exams.filter((e) => e.id !== id));
       },
-      error: (err) => console.error('Failed to delete exam:', err)
+      error: (err) => console.error('Failed to delete exam:', err),
     });
   }
 
@@ -130,7 +125,7 @@ export class AdminContent {
   addTask() {
     const title = this.newTaskTitle().trim();
     const dueDate = this.newTaskDueDate().trim();
-    
+
     if (!title || !dueDate) return;
 
     const newTask = {
@@ -144,10 +139,10 @@ export class AdminContent {
 
     this.tasksService.create(newTask).subscribe({
       next: (task) => {
-        this.tasks.update(tasks => [...tasks, task]);
+        this.tasks.update((tasks) => [...tasks, task]);
         this.clearTaskForm();
       },
-      error: (err) => console.error('Failed to add task:', err)
+      error: (err) => console.error('Failed to add task:', err),
     });
   }
 
@@ -174,35 +169,31 @@ export class AdminContent {
 
     this.tasksService.update(taskId, updatedData).subscribe({
       next: (task) => {
-        this.tasks.update(tasks => 
-          tasks.map(t => t.id === taskId ? task : t)
-        );
+        this.tasks.update((tasks) => tasks.map((t) => (t.id === taskId ? task : t)));
         this.clearTaskForm();
       },
-      error: (err) => console.error('Failed to update task:', err)
+      error: (err) => console.error('Failed to update task:', err),
     });
   }
 
   toggleTaskCompletion(id: string) {
-    const task = this.tasks().find(t => t.id === id);
+    const task = this.tasks().find((t) => t.id === id);
     if (!task) return;
 
     this.tasksService.update(id, { completed: !task.completed }).subscribe({
       next: (updatedTask) => {
-        this.tasks.update(tasks => 
-          tasks.map(t => t.id === id ? updatedTask : t)
-        );
+        this.tasks.update((tasks) => tasks.map((t) => (t.id === id ? updatedTask : t)));
       },
-      error: (err) => console.error('Failed to toggle task:', err)
+      error: (err) => console.error('Failed to toggle task:', err),
     });
   }
 
   deleteTask(id: string) {
     this.tasksService.delete(id).subscribe({
       next: () => {
-        this.tasks.update(tasks => tasks.filter(t => t.id !== id));
+        this.tasks.update((tasks) => tasks.filter((t) => t.id !== id));
       },
-      error: (err) => console.error('Failed to delete task:', err)
+      error: (err) => console.error('Failed to delete task:', err),
     });
   }
 
@@ -216,8 +207,8 @@ export class AdminContent {
   }
 
   getSortedExams(): ExamDate[] {
-    return [...this.exams()].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    return [...this.exams()].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   }
 

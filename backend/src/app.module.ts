@@ -8,6 +8,11 @@ import { MemesModule } from './memes/memes.module';
 
 @Module({
   imports: [
+    // Serve Angular frontend from root
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      exclude: ['/api*', '/uploads*'],
+    }),
     // Serve uploaded files
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),

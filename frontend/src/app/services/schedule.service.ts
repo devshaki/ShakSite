@@ -19,7 +19,7 @@ export interface DisplayDay {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScheduleService {
   private themeService = inject(ThemeService);
@@ -34,7 +34,7 @@ export class ScheduleService {
     wednesday: { hebrew: 'רביעי', number: 3 },
     thursday: { hebrew: 'חמישי', number: 4 },
     friday: { hebrew: 'שישי', number: 5 },
-    saturday: { hebrew: 'שבת', number: 6 }
+    saturday: { hebrew: 'שבת', number: 6 },
   };
 
   private getGroupData(groupId: string): Group | undefined {
@@ -46,27 +46,30 @@ export class ScheduleService {
     return template?.periods.find((p: Period) => p.id === periodId);
   }
 
-  private buildDisplaySlots(group: Group, daySchedule: { day: DayOfWeek; classes: ScheduleEntry[] }): DisplaySlot[] {
+  private buildDisplaySlots(
+    group: Group,
+    daySchedule: { day: DayOfWeek; classes: ScheduleEntry[] }
+  ): DisplaySlot[] {
     const template = this.timetable.periodTemplates.find((t: any) => t.id === group.templateId);
     if (!template) return [];
-    
+
     // Create a map of scheduled classes by period ID
     const scheduledMap = new Map<string, ScheduleEntry>();
     for (const entry of daySchedule.classes) {
       scheduledMap.set(entry.periodId, entry);
     }
-    
+
     const slots: DisplaySlot[] = [];
-    
+
     // Go through all periods in the template to maintain time alignment
     for (const period of template.periods) {
       const entry = scheduledMap.get(period.id);
-      
+
       if (entry) {
         const classInfo = this.timetable.classes[entry.classId];
         if (classInfo) {
           const isBreak = period.id.startsWith('B') || entry.classId === 'BREAK';
-          
+
           slots.push({
             start: period.start,
             end: period.end,
@@ -74,7 +77,7 @@ export class ScheduleService {
             label: classInfo.subject,
             classInfo,
             room: entry.room,
-            notes: entry.notes
+            notes: entry.notes,
           });
         }
       } else {
@@ -83,11 +86,11 @@ export class ScheduleService {
           start: period.start,
           end: period.end,
           isBreak: false,
-          label: ''
+          label: '',
         });
       }
     }
-    
+
     return slots;
   }
 
@@ -95,12 +98,12 @@ export class ScheduleService {
     const group = this.getGroupData(groupId);
     if (!group) return [];
 
-    return group.week.map(daySchedule => {
+    return group.week.map((daySchedule) => {
       const dayInfo = this.DAY_MAP[daySchedule.day];
       return {
         day: dayInfo.hebrew,
         dayNumber: dayInfo.number,
-        slots: this.buildDisplaySlots(group, daySchedule)
+        slots: this.buildDisplaySlots(group, daySchedule),
       };
     });
   }
@@ -218,10 +221,10 @@ export class ScheduleService {
   schedule = computed(() => {
     const groupId = this.selectedGroup();
     const displaySchedule = this.getDisplaySchedule(groupId);
-    
+
     if (this.showOnlyToday()) {
       const today = new Date().getDay();
-      return displaySchedule.filter(day => day.dayNumber === today);
+      return displaySchedule.filter((day) => day.dayNumber === today);
     }
     return displaySchedule;
   });
@@ -236,12 +239,10 @@ export class ScheduleService {
     this.http.get<Quote[]>(this.apiUrl).subscribe({
       next: (quotes) => {
         // Store quotes for later use
-        const customTexts = quotes.map(q => 
-          q.author ? `${q.text} — ${q.author}` : q.text
-        );
+        const customTexts = quotes.map((q) => (q.author ? `${q.text} — ${q.author}` : q.text));
         localStorage.setItem('_cachedQuotes', JSON.stringify([...this.QUOTES, ...customTexts]));
       },
-      error: (err) => console.error('Failed to load custom quotes:', err)
+      error: (err) => console.error('Failed to load custom quotes:', err),
     });
   }
 
@@ -249,7 +250,7 @@ export class ScheduleService {
     // Try to get cached quotes from localStorage first
     const cachedQuotes = localStorage.getItem('_cachedQuotes');
     let allQuotes = this.QUOTES;
-    
+
     if (cachedQuotes) {
       try {
         allQuotes = JSON.parse(cachedQuotes);
@@ -257,24 +258,28 @@ export class ScheduleService {
         allQuotes = this.QUOTES;
       }
     }
-    
+
     // Load fresh quotes from backend for next time
     this.loadCustomQuotes();
-    
+
     const today = new Date();
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+    const dayOfYear = Math.floor(
+      (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000
+    );
     return allQuotes[dayOfYear % allQuotes.length];
   }
 
   getCurrentPeriod(): CurrentPeriod | null {
     const now = new Date();
     const currentDay = now.getDay();
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-    
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(
+      now.getMinutes()
+    ).padStart(2, '0')}`;
+
     const groupId = this.selectedGroup();
     const displaySchedule = this.getDisplaySchedule(groupId);
-    const daySchedule = displaySchedule.find(d => d.dayNumber === currentDay);
-    
+    const daySchedule = displaySchedule.find((d) => d.dayNumber === currentDay);
+
     if (!daySchedule) return null;
 
     const timeSlots = daySchedule.slots;
@@ -289,7 +294,7 @@ export class ScheduleService {
         // Find next break (if any)
         let nextBreak: TimeSlot | undefined;
         let minutesUntilBreak: number | undefined;
-        
+
         for (let j = i + 1; j < timeSlots.length; j++) {
           if (timeSlots[j].isBreak) {
             nextBreak = timeSlots[j];
@@ -308,7 +313,7 @@ export class ScheduleService {
               start: slot.end,
               end: nextSlot.start,
               isBreak: true,
-              label: 'הפסקה'
+              label: 'הפסקה',
             };
             minutesUntilBreak = this.timeToMinutes(slot.end) - currentMinutes;
           }
@@ -332,7 +337,7 @@ export class ScheduleService {
   }
 
   toggleShowOnlyToday(): void {
-    this.showOnlyToday.update(v => !v);
+    this.showOnlyToday.update((v) => !v);
   }
 
   private timeToMinutes(time: string): number {

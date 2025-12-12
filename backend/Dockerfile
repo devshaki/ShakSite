@@ -1,5 +1,5 @@
-# Backend Dockerfile - Works when backend is the build context
-# Since DigitalOcean is using backend as source_dir, we need to adjust
+# Backend Dockerfile - API only
+# For DigitalOcean App Platform with separate frontend static site
 
 FROM node:20-alpine AS backend-builder
 
@@ -24,11 +24,11 @@ COPY --from=backend-builder /app/node_modules ./node_modules
 # Create necessary directories
 RUN mkdir -p uploads/memes data
 
-# Note: Frontend static files would need to be added separately
-# For now, this serves API only at /api routes
-
 # Expose port
 EXPOSE 3000
+
+# Set production environment
+ENV NODE_ENV=production
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
