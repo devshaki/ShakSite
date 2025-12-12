@@ -1,14 +1,13 @@
 <div class="page-container">
   <header class="page-header">
-    <button class="back-btn" (click)="router.navigate(['/'])" title="חזרה למערכת">
-      ← חזרה
+    <button class="back-btn" (click)="router.navigate(['/'])">
+      ← חזרה לדף הבית
     </button>
     <h1>🖼️ גלריית ממים</h1>
     <div class="spacer"></div>
   </header>
 
 <div class="admin-memes">
-  <h2>גלריית ממים</h2>
 
   <div class="upload-section">
     <h3>העלאת מם חדש</h3>
@@ -84,8 +83,10 @@
         <div class="meme-card">
           <img 
             [src]="getMemeUrl(meme.filename)" 
-            [alt]="meme.caption || meme.originalName"
+            [alt]="meme.caption || 'מם'"
             class="meme-image"
+            (error)="onImageError($event, meme)"
+            loading="lazy"
           />
           
           <div class="meme-overlay">

@@ -92,6 +92,22 @@ export class AdminMemes {
   }
 
   getMemeUrl(filename: string): string {
-    return `/uploads/memes/${filename}`;
+    const url = `/uploads/memes/${filename}`;
+    console.log('Loading meme image:', url);
+    return url;
+  }
+
+  onImageError(event: Event, meme: any) {
+    console.error('Failed to load image:', meme.filename, 'URL:', this.getMemeUrl(meme.filename));
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    // Show error message
+    const parent = img.parentElement;
+    if (parent) {
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'image-error';
+      errorDiv.textContent = `שגיאה בטעינת תמונה: ${meme.filename}`;
+      parent.appendChild(errorDiv);
+    }
   }
 }

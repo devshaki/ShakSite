@@ -44,21 +44,26 @@
 }
 
 .admin-quotes {
-  padding: 2rem;
+  padding: 0 2rem 2rem 2rem;
   max-width: 900px;
   margin: 0 auto;
 
-  h2 {
+  .page-description {
+    background: var(--surface1);
+    padding: 1.25rem;
+    border-radius: 10px;
+    border-right: 4px solid var(--blue);
     color: var(--text);
+    font-size: 1.1rem;
+    line-height: 1.6;
     margin-bottom: 2rem;
-    text-align: center;
-    font-size: 2rem;
   }
 
   h3 {
     color: var(--text);
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    font-weight: 700;
   }
 
   .add-quote-section {

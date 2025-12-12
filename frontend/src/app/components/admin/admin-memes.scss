@@ -44,21 +44,14 @@
 }
 
 .admin-memes {
-  padding: 2rem;
+  padding: 0 2rem 2rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
-
-  h2 {
-    color: var(--text);
-    margin-bottom: 2rem;
-    text-align: center;
-    font-size: 2rem;
-  }
 
   h3 {
     color: var(--text);
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
@@ -276,6 +269,19 @@
           height: 350px;
           object-fit: cover;
           display: block;
+          background: var(--surface1);
+        }
+
+        .image-error {
+          padding: 2rem;
+          text-align: center;
+          color: var(--red);
+          background: var(--surface1);
+          height: 350px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.9rem;
         }
 
         .meme-overlay {
