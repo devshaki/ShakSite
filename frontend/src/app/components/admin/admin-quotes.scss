@@ -1,68 +1,79 @@
 .admin-quotes {
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 
   h2 {
     color: var(--text);
     margin-bottom: 2rem;
     text-align: center;
+    font-size: 2rem;
   }
 
   h3 {
     color: var(--text);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .add-quote-section {
     background: var(--surface0);
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 12px;
-    margin-bottom: 2rem;
-    border: 1px solid var(--overlay0);
+    margin-bottom: 3rem;
+    border: 2px solid var(--overlay0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
 
       label {
         display: block;
-        color: var(--subtext1);
-        margin-bottom: 0.5rem;
-        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        font-size: 1.05rem;
       }
 
       textarea, input {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid var(--overlay0);
+        padding: 1rem;
+        border: 2px solid var(--overlay0);
         border-radius: 8px;
         background: var(--base);
         color: var(--text);
         font-family: inherit;
         font-size: 1rem;
         resize: vertical;
+        transition: all 0.2s;
 
         &:focus {
           outline: none;
           border-color: var(--blue);
+          box-shadow: 0 0 0 3px rgba(137, 180, 250, 0.1);
+        }
+
+        &::placeholder {
+          color: var(--overlay2);
         }
       }
     }
 
     .btn-add {
       background: var(--green);
-      color: var(--base);
+      color: var(--crust);
       border: none;
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 2rem;
       border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(166, 227, 161, 0.3);
 
       &:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(166, 227, 161, 0.4);
       }
 
       &:active {
@@ -75,24 +86,26 @@
     .empty-state {
       text-align: center;
       color: var(--subtext0);
-      padding: 2rem;
+      padding: 3rem;
       background: var(--surface0);
-      border-radius: 8px;
+      border-radius: 12px;
       font-style: italic;
+      font-size: 1.1rem;
     }
 
     .quote-item {
       display: flex;
-      gap: 1rem;
+      gap: 1.5rem;
       background: var(--surface0);
-      padding: 1rem;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border-radius: 12px;
       margin-bottom: 1rem;
-      border: 1px solid var(--overlay0);
+      border: 2px solid var(--overlay0);
       transition: all 0.2s;
 
       &:hover {
-        border-color: var(--overlay1);
+        border-color: var(--blue);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       .quote-content {
@@ -100,31 +113,42 @@
 
         .quote-text {
           color: var(--text);
-          font-size: 1rem;
-          margin-bottom: 0.5rem;
-          line-height: 1.5;
+          font-size: 1.15rem;
+          margin-bottom: 0.75rem;
+          line-height: 1.6;
+          font-weight: 500;
         }
 
         .quote-author {
           color: var(--subtext1);
-          font-size: 0.9rem;
+          font-size: 1rem;
           font-style: italic;
-          margin-bottom: 0.25rem;
+          margin-bottom: 0.5rem;
         }
 
         .quote-date {
           color: var(--subtext0);
-          font-size: 0.75rem;
+          font-size: 0.85rem;
         }
       }
 
       .btn-delete {
         background: var(--red);
-        color: var(--base);
+        color: var(--crust);
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        height: fit-content;
+        box-shadow: 0 2px 8px rgba(243, 139, 168, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(243, 139, 168, 0.4);
+        }
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;

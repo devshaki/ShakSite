@@ -15,8 +15,8 @@ import { environment } from '../../../environments/environment';
 export class AdminMemes {
   memes = signal<Meme[]>([]);
   selectedFile = signal<File | null>(null);
-  caption = signal('');
-  uploadedBy = signal('');
+  caption = '';
+  uploadedBy = '';
   uploading = signal(false);
   previewUrl = signal<string | null>(null);
 
@@ -55,8 +55,8 @@ export class AdminMemes {
     this.uploading.set(true);
     const formData = new FormData();
     formData.append('file', file);
-    if (this.caption()) formData.append('caption', this.caption());
-    if (this.uploadedBy()) formData.append('uploadedBy', this.uploadedBy());
+    if (this.caption) formData.append('caption', this.caption);
+    if (this.uploadedBy) formData.append('uploadedBy', this.uploadedBy);
 
     this.http.post<Meme>(`${this.apiUrl}/upload`, formData).subscribe({
       next: (meme) => {
@@ -85,8 +85,8 @@ export class AdminMemes {
 
   clearForm() {
     this.selectedFile.set(null);
-    this.caption.set('');
-    this.uploadedBy.set('');
+    this.caption = '';
+    this.uploadedBy = '';
     this.previewUrl.set(null);
   }
 

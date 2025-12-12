@@ -1,78 +1,85 @@
 .app-container {
   min-height: 100vh;
-  padding: 2rem;
+  padding-top: 0;
   max-width: 1600px;
   margin: 0 auto;
 }
 
-.header {
+.navbar {
+  background: var(--ctp-surface0);
+  border-bottom: 2px solid var(--ctp-surface1);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-
+  .nav-brand {
     h1 {
       margin: 0;
-      font-size: 2.5rem;
+      font-size: 1.75rem;
       font-weight: bold;
       color: var(--ctp-text);
-      text-align: center;
-      flex: 1;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+
+    .nav-btn {
+      background: var(--ctp-surface1);
+      border: 2px solid var(--ctp-surface2);
+      color: var(--ctp-text);
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+
+      &:hover {
+        border-color: var(--ctp-blue);
+        background: var(--ctp-surface2);
+        color: var(--ctp-blue);
+        transform: translateY(-2px);
+      }
     }
 
-    .header-actions {
+    .theme-toggle {
+      background: var(--ctp-surface1);
+      border: 2px solid var(--ctp-surface2);
+      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      cursor: pointer;
       display: flex;
-      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      color: var(--ctp-text);
 
-      .admin-link {
-        background: var(--ctp-surface0);
-        border: 2px solid var(--ctp-surface1);
-        border-radius: 8px;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        font-size: 1.25rem;
-
-        &:hover {
-          border-color: var(--ctp-blue);
-          background: var(--ctp-surface1);
-          transform: scale(1.05);
-        }
+      &:hover {
+        border-color: var(--ctp-yellow);
+        background: var(--ctp-surface2);
+        transform: scale(1.05) rotate(15deg);
       }
 
-      .theme-toggle {
-        background: var(--ctp-surface0);
-        border: 2px solid var(--ctp-surface1);
-        border-radius: 8px;
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        color: var(--ctp-text);
-
-        &:hover {
-          border-color: var(--ctp-blue);
-          background: var(--ctp-surface1);
-          transform: scale(1.05);
-        }
-
-        svg {
-          width: 20px;
-          height: 20px;
-        }
+      svg {
+        width: 20px;
+        height: 20px;
       }
     }
   }
+}
+
+.header {
+  margin: 0 2rem 2rem 2rem;
 
   .quote {
     text-align: center;
@@ -90,4 +97,5 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  padding: 0 2rem 2rem 2rem;
 }

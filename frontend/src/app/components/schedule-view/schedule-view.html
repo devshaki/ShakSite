@@ -1,18 +1,24 @@
 <div class="app-container">
-  <header class="header">
-    <div class="header-top">
+  <nav class="navbar">
+    <div class="nav-brand">
       <h1>מערכת שעות</h1>
-      <div class="header-actions">
-        <button class="admin-link" (click)="router.navigate(['/admin'])" title="לוח ניהול">
-          ⚙️
-        </button>
-        <button class="theme-toggle" (click)="themeService.cycleTheme()" title="החלף ערכת צבעים">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
-          </svg>
-        </button>
-      </div>
     </div>
+    <div class="nav-links">
+      <button class="nav-btn" (click)="router.navigate(['/'])" title="דף הבית">
+        🏠 דף הבית
+      </button>
+      <button class="nav-btn" (click)="router.navigate(['/admin'])" title="לוח ניהול">
+        ⚙️ לוח ניהול
+      </button>
+      <button class="theme-toggle" (click)="themeService.cycleTheme()" title="החלף ערכת צבעים">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+  
+  <header class="header">
     <div class="quote">{{ dailyQuote() }}</div>
   </header>
 
