@@ -190,28 +190,6 @@
       }
     }
   }
-            opacity: 0.9;
-            transform: translateY(-1px);
-          }
-
-          &:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-          }
-        }
-
-        .btn-upload {
-          background: var(--green);
-          color: var(--base);
-        }
-
-        .btn-cancel {
-          background: var(--overlay0);
-          color: var(--text);
-        }
-      }
-    }
-  }
 
   .memes-grid {
     .empty-state {
