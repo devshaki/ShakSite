@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
 import { MemesService } from './memes.service';
 import { Meme } from './meme.interface';
 
@@ -27,7 +27,11 @@ export class MemesController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/memes',
+        destination: (req, file, cb) => {
+          // Use absolute path from app root
+          const uploadPath = join(process.cwd(), 'uploads', 'memes');
+          cb(null, uploadPath);
+        },
         filename: (req, file, cb) => {
           const randomName = Array(32)
             .fill(null)
@@ -52,6 +56,11 @@ export class MemesController {
     @Body('caption') caption?: string,
     @Body('uploadedBy') uploadedBy?: string
   ): Meme {
+    console.log('File uploaded:', {
+      filename: file.filename,
+      path: file.path,
+      destination: file.destination,
+    });
     const memeData = {
       filename: file.filename,
       originalName: file.originalname,

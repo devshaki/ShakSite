@@ -1,11 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Set global API prefix
   app.setGlobalPrefix('api');
+
+  // Ensure uploads directory exists
+  const uploadsPath = join(process.cwd(), 'uploads', 'memes');
+  if (!existsSync(uploadsPath)) {
+    mkdirSync(uploadsPath, { recursive: true });
+    console.log(`📁 Created uploads directory at ${uploadsPath}`);
+  }
 
   // Enable CORS - allow frontend origin
   const allowedOrigins =
@@ -28,5 +37,6 @@ async function bootstrap() {
   console.log(`🚀 Backend server running on port ${port}`);
   console.log(`📁 Serving frontend from root`);
   console.log(`🔌 API available at /api`);
+  console.log(`📂 Uploads directory: ${uploadsPath}`);
 }
 bootstrap();
