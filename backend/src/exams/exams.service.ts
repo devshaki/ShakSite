@@ -47,9 +47,9 @@ export class ExamsService {
 
   update(id: string, exam: Partial<ExamDate>): ExamDate | null {
     const exams = this.readData();
-    const index = exams.findIndex(e => e.id === id);
+    const index = exams.findIndex((e) => e.id === id);
     if (index === -1) return null;
-    
+
     exams[index] = { ...exams[index], ...exam, id };
     this.writeData(exams);
     return exams[index];
@@ -57,9 +57,9 @@ export class ExamsService {
 
   delete(id: string): boolean {
     const exams = this.readData();
-    const filtered = exams.filter(e => e.id !== id);
+    const filtered = exams.filter((e) => e.id !== id);
     if (filtered.length === exams.length) return false;
-    
+
     this.writeData(filtered);
     return true;
   }

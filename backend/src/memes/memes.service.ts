@@ -51,8 +51,8 @@ export class MemesService {
 
   delete(id: string): boolean {
     const memes = this.readData();
-    const meme = memes.find(m => m.id === id);
-    
+    const meme = memes.find((m) => m.id === id);
+
     if (!meme) return false;
 
     // Delete the file
@@ -62,7 +62,7 @@ export class MemesService {
     }
 
     // Remove from data
-    const filtered = memes.filter(m => m.id !== id);
+    const filtered = memes.filter((m) => m.id !== id);
     this.writeData(filtered);
     return true;
   }

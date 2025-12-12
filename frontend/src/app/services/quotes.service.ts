@@ -5,7 +5,7 @@ import { Quote } from '../models/content.models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class QuotesService {
   private apiUrl = `${environment.apiUrl}/quotes`;

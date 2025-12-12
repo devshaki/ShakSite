@@ -5,7 +5,7 @@ import { Task } from '../models/content.models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TasksService {
   private apiUrl = `${environment.apiUrl}/tasks`;

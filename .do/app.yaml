@@ -33,7 +33,6 @@ static_sites:
     envs:
       - key: NODE_ENV
         value: production
-
 # Optional: Add a database or other services here
 # databases:
 #   - name: db

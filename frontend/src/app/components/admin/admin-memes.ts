@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-memes.html',
-  styleUrl: './admin-memes.scss'
+  styleUrl: './admin-memes.scss',
 })
 export class AdminMemes {
   memes = signal<Meme[]>([]);
@@ -29,7 +29,7 @@ export class AdminMemes {
   loadMemes() {
     this.http.get<Meme[]>(this.apiUrl).subscribe({
       next: (memes) => this.memes.set(memes),
-      error: (err) => console.error('Failed to load memes:', err)
+      error: (err) => console.error('Failed to load memes:', err),
     });
   }
 
@@ -60,7 +60,7 @@ export class AdminMemes {
 
     this.http.post<Meme>(`${this.apiUrl}/upload`, formData).subscribe({
       next: (meme) => {
-        this.memes.update(memes => [meme, ...memes]);
+        this.memes.update((memes) => [meme, ...memes]);
         this.clearForm();
         this.uploading.set(false);
       },
@@ -68,7 +68,7 @@ export class AdminMemes {
         console.error('Upload failed:', err);
         alert('העלאה נכשלה. נסה שוב.');
         this.uploading.set(false);
-      }
+      },
     });
   }
 
@@ -77,9 +77,9 @@ export class AdminMemes {
 
     this.http.delete<{ success: boolean }>(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
-        this.memes.update(memes => memes.filter(m => m.id !== id));
+        this.memes.update((memes) => memes.filter((m) => m.id !== id));
       },
-      error: (err) => console.error('Delete failed:', err)
+      error: (err) => console.error('Delete failed:', err),
     });
   }
 

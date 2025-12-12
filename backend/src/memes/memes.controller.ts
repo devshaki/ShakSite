@@ -45,12 +45,12 @@ export class MemesController {
       limits: {
         fileSize: 10 * 1024 * 1024, // 10MB
       },
-    }),
+    })
   )
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Body('caption') caption?: string,
-    @Body('uploadedBy') uploadedBy?: string,
+    @Body('uploadedBy') uploadedBy?: string
   ): Meme {
     const memeData = {
       filename: file.filename,

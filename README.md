@@ -17,29 +17,35 @@ ShakSite/
 ### Backend Setup
 
 1. Navigate to backend and install dependencies:
+
 ```bash
 cd backend
 npm install
 ```
 
 2. Start the backend server:
+
 ```bash
 npm run start:dev
 ```
+
 Backend runs on http://localhost:3000
 
 ### Frontend Setup
 
 1. Navigate to frontend and install dependencies:
+
 ```bash
 cd frontend
 npm install
 ```
 
 2. Start the Angular dev server:
+
 ```bash
 npm start
 ```
+
 Frontend runs on http://localhost:4200
 
 ## Features

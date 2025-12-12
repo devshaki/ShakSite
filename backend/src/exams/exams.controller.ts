@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { ExamsService } from './exams.service';
 import { ExamDate } from './exam.interface';
 
@@ -17,7 +25,10 @@ export class ExamsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() exam: Partial<ExamDate>): ExamDate | null {
+  update(
+    @Param('id') id: string,
+    @Body() exam: Partial<ExamDate>
+  ): ExamDate | null {
     return this.examsService.update(id, exam);
   }
 

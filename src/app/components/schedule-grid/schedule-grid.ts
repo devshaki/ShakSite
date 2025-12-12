@@ -1,8 +1,6 @@
 import { Component, OnInit, OnDestroy, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScheduleService } from '../../services/schedule.service';
-import { ExamsService } from '../../services/exams.service';
-import { TasksService } from '../../services/tasks.service';
 import { TimeSlot } from '../../models/schedule.models';
 import { ExamDate, Task } from '../../models/content.models';
 
@@ -23,11 +21,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
   upcomingExams = signal<ExamDate[]>([]);
   incompleteTasks = signal<Task[]>([]);
 
-  constructor(
-    public scheduleService: ScheduleService,
-    private examsService: ExamsService,
-    private tasksService: TasksService
-  ) {
+  constructor(public scheduleService: ScheduleService) {
     this.schedule = this.scheduleService.schedule;
     this.selectedGroup = this.scheduleService.selectedGroup;
     this.showOnlyToday = this.scheduleService.showOnlyToday;
@@ -47,7 +41,9 @@ export class ScheduleGrid implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Force update every minute to refresh current time highlighting
     this.intervalId = window.setInterval(() => {
-      this.scheduleService.selectedGroup.set(this.scheduleService.selectedGroup());
+      this.scheduleService.selectedGroup.set(
+        this.scheduleService.selectedGroup()
+      );
       this.loadExamsAndTasks(); // Refresh data
     }, 60000);
   }
@@ -59,9 +55,11 @@ export class ScheduleGrid implements OnInit, OnDestroy {
   }
 
   loadExamsAndTasks(): void {
-    // Load exams from backend
-    this.examsService.getAll().subscribe({
-      next: (allExams) => {
+    // Load exams
+    const savedExams = localStorage.getItem('examDates');
+    if (savedExams) {
+      try {
+        const allExams: ExamDate[] = JSON.parse(savedExams);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -75,17 +73,22 @@ export class ScheduleGrid implements OnInit, OnDestroy {
             examDate.setHours(0, 0, 0, 0);
             return examDate >= today && examDate <= thirtyDaysFromNow;
           })
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+          )
           .slice(0, 5); // Show max 5 exams
 
         this.upcomingExams.set(upcoming);
-      },
-      error: (err) => console.error('Failed to load exams:', err),
-    });
+      } catch (e) {
+        this.upcomingExams.set([]);
+      }
+    }
 
-    // Load tasks from backend
-    this.tasksService.getAll().subscribe({
-      next: (allTasks) => {
+    // Load tasks
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+      try {
+        const allTasks: Task[] = JSON.parse(savedTasks);
         const incomplete = allTasks
           .filter((task) => !task.completed)
           .sort((a, b) => {
@@ -98,14 +101,17 @@ export class ScheduleGrid implements OnInit, OnDestroy {
               return aPriority - bPriority;
             }
 
-            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+            return (
+              new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+            );
           })
           .slice(0, 5); // Show max 5 tasks
 
         this.incompleteTasks.set(incomplete);
-      },
-      error: (err) => console.error('Failed to load tasks:', err),
-    });
+      } catch (e) {
+        this.incompleteTasks.set([]);
+      }
+    }
   }
 
   getTimeSlotsForDay(dayIndex: number): TimeSlot[] {

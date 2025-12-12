@@ -47,9 +47,9 @@ export class TasksService {
 
   update(id: string, task: Partial<Task>): Task | null {
     const tasks = this.readData();
-    const index = tasks.findIndex(t => t.id === id);
+    const index = tasks.findIndex((t) => t.id === id);
     if (index === -1) return null;
-    
+
     tasks[index] = { ...tasks[index], ...task, id };
     this.writeData(tasks);
     return tasks[index];
@@ -57,9 +57,9 @@ export class TasksService {
 
   delete(id: string): boolean {
     const tasks = this.readData();
-    const filtered = tasks.filter(t => t.id !== id);
+    const filtered = tasks.filter((t) => t.id !== id);
     if (filtered.length === tasks.length) return false;
-    
+
     this.writeData(filtered);
     return true;
   }

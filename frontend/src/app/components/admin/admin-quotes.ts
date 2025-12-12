@@ -9,7 +9,7 @@ import { QuotesService } from '../../services/quotes.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './admin-quotes.html',
-  styleUrl: './admin-quotes.scss'
+  styleUrl: './admin-quotes.scss',
 })
 export class AdminQuotes {
   quotes = signal<Quote[]>([]);
@@ -23,7 +23,7 @@ export class AdminQuotes {
   loadQuotes() {
     this.quotesService.getAll().subscribe({
       next: (quotes) => this.quotes.set(quotes),
-      error: (err) => console.error('Failed to load quotes:', err)
+      error: (err) => console.error('Failed to load quotes:', err),
     });
   }
 
@@ -34,25 +34,25 @@ export class AdminQuotes {
     const newQuote = {
       text,
       author: this.newQuoteAuthor().trim() || undefined,
-      addedDate: new Date().toISOString()
+      addedDate: new Date().toISOString(),
     };
 
     this.quotesService.create(newQuote).subscribe({
       next: (quote) => {
-        this.quotes.update(quotes => [...quotes, quote]);
+        this.quotes.update((quotes) => [...quotes, quote]);
         this.newQuoteText.set('');
         this.newQuoteAuthor.set('');
       },
-      error: (err) => console.error('Failed to add quote:', err)
+      error: (err) => console.error('Failed to add quote:', err),
     });
   }
 
   deleteQuote(id: string) {
     this.quotesService.delete(id).subscribe({
       next: () => {
-        this.quotes.update(quotes => quotes.filter(q => q.id !== id));
+        this.quotes.update((quotes) => quotes.filter((q) => q.id !== id));
       },
-      error: (err) => console.error('Failed to delete quote:', err)
+      error: (err) => console.error('Failed to delete quote:', err),
     });
   }
 }

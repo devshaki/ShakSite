@@ -1,0 +1,87 @@
+<div class="schedule-controls">
+  <div class="group-slider">
+    <div
+      class="slider-option"
+      [class.active]="selectedGroup() === 'A'"
+      (click)="scheduleService.selectedGroup.set('A')"
+    >
+      קבוצה A
+    </div>
+    <div
+      class="slider-option"
+      [class.active]="selectedGroup() === 'B'"
+      (click)="scheduleService.selectedGroup.set('B')"
+    >
+      קבוצה B
+    </div>
+    <div class="slider-indicator" [class.right]="selectedGroup() === 'B'"></div>
+  </div>
+
+  <button
+    class="btn"
+    (click)="scheduleService.toggleShowOnlyToday()"
+    [class.active]="showOnlyToday()"
+  >
+    {{ showOnlyToday() ? 'הצג שבוע' : 'היום בלבד' }}
+  </button>
+</div>
+
+<!-- Upcoming Exams and Tasks -->
+@if (upcomingExams().length > 0 || incompleteTasks().length > 0) {
+<div class="info-cards">
+  @if (upcomingExams().length > 0) {
+  <div class="info-card exams-card">
+    <h3>📚 מבחנים קרובים</h3>
+    @for (exam of upcomingExams(); track exam.id) {
+    <div class="info-item">
+      <div class="info-title">{{ exam.subject }}</div>
+      <div class="info-meta">
+        {{ exam.date | date: 'dd/MM/yyyy' }} @if (exam.time) {
+        <span> • {{ exam.time }}</span>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  } @if (incompleteTasks().length > 0) {
+  <div class="info-card tasks-card">
+    <h3>✓ מטלות לביצוע</h3>
+    @for (task of incompleteTasks(); track task.id) {
+    <div class="info-item" [attr.data-priority]="task.priority">
+      <div class="info-title">{{ task.title }}</div>
+      <div class="info-meta">
+        {{ task.dueDate | date: 'dd/MM/yyyy' }} @if (task.subject) {
+        <span> • {{ task.subject }}</span>
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>
+}
+
+<div class="schedule-grid">
+  @for (day of schedule(); track day.dayNumber) {
+  <div class="day-column">
+    <div class="day-header">{{ day.day }}</div>
+
+    @for (slot of getTimeSlotsForDay($index); track slot.start) {
+    <div
+      class="time-slot"
+      [class.break]="slot.isBreak"
+      [class.empty]="!slot.label"
+      [class.current]="isCurrentSlot(day.day, slot)"
+      [style.border-left]="slot.label ? '4px solid ' + getSlotColor(slot) : 'none'"
+    >
+      @if (slot.label) {
+      <div class="slot-label">{{ slot.label }}</div>
+      <div class="slot-time">{{ slot.start }} - {{ slot.end }}</div>
+      @if (getSlotDetails(slot)) {
+      <div class="slot-details">{{ getSlotDetails(slot) }}</div>
+      } }
+    </div>
+    }
+  </div>
+  }
+</div>

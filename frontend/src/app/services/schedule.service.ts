@@ -224,6 +224,8 @@ export class ScheduleService {
       return displaySchedule.filter(day => day.dayNumber === today);
     }
     return displaySchedule;
+  });
+
   private getAllQuotes(): string[] {
     // This will be called synchronously, so we need to use the default quotes
     // and fetch backend quotes asynchronously
@@ -263,6 +265,13 @@ export class ScheduleService {
     const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
     return allQuotes[dayOfYear % allQuotes.length];
   }
+
+  getCurrentPeriod(): CurrentPeriod | null {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    const groupId = this.selectedGroup();
     const displaySchedule = this.getDisplaySchedule(groupId);
     const daySchedule = displaySchedule.find(d => d.dayNumber === currentDay);
     
@@ -316,13 +325,6 @@ export class ScheduleService {
     }
 
     return null;
-  }
-
-  getDailyQuote(): string {
-    const allQuotes = this.getAllQuotes();
-    const today = new Date();
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    return allQuotes[dayOfYear % allQuotes.length];
   }
 
   toggleGroup(): void {

@@ -36,6 +36,7 @@ npm run start:prod
 ## API Endpoints
 
 ### Quotes
+
 - `GET /api/quotes` - Get all quotes
 - `POST /api/quotes` - Create a new quote
   ```json
@@ -48,6 +49,7 @@ npm run start:prod
 - `DELETE /api/quotes/:id` - Delete a quote
 
 ### Exams
+
 - `GET /api/exams` - Get all exams
 - `POST /api/exams` - Create a new exam
   ```json
@@ -63,6 +65,7 @@ npm run start:prod
 - `DELETE /api/exams/:id` - Delete an exam
 
 ### Tasks
+
 - `GET /api/tasks` - Get all tasks
 - `POST /api/tasks` - Create a new task
   ```json
@@ -79,6 +82,7 @@ npm run start:prod
 - `DELETE /api/tasks/:id` - Delete a task
 
 ### Memes
+
 - `GET /api/memes` - Get all memes metadata
 - `POST /api/memes/upload` - Upload a new meme (multipart/form-data)
   - `file`: Image file (required)

@@ -13,11 +13,13 @@ Your deployment failed because DigitalOcean couldn't detect the buildpacks. Here
 ### Method 1: Manual Configuration in UI (Easiest)
 
 1. **In DigitalOcean App Platform:**
+
    - Delete the current failed app
    - Create New App
    - Connect your GitHub repo
 
 2. **Add Backend Component:**
+
    - Click "Add Component" → "Web Service"
    - Source Directory: `backend`
    - Dockerfile Path: `backend/Dockerfile`
@@ -25,6 +27,7 @@ Your deployment failed because DigitalOcean couldn't detect the buildpacks. Here
    - Name: `backend`
 
 3. **Add Frontend Component:**
+
    - Click "Add Component" → "Static Site"
    - Source Directory: `frontend`
    - Build Command: `npm install && npm run build -- --configuration production`
@@ -50,7 +53,7 @@ Just redeploy - it should now detect the Dockerfiles in each folder.
 1. Copy your backend URL: `https://backend-xxxxx.ondigitalocean.app`
 2. Update `frontend/src/environments/environment.prod.ts`:
    ```typescript
-   apiUrl: 'https://YOUR-BACKEND-URL/api'
+   apiUrl: "https://YOUR-BACKEND-URL/api";
    ```
 3. Commit and push to trigger redeploy
 

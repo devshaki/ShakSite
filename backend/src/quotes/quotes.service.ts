@@ -47,7 +47,7 @@ export class QuotesService {
 
   delete(id: string): boolean {
     const quotes = this.readData();
-    const filtered = quotes.filter(q => q.id !== id);
+    const filtered = quotes.filter((q) => q.id !== id);
     if (filtered.length === quotes.length) {
       return false;
     }

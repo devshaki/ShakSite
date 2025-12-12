@@ -5,7 +5,7 @@ import { ExamDate } from '../models/content.models';
 import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExamsService {
   private apiUrl = `${environment.apiUrl}/exams`;
