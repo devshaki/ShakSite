@@ -4,7 +4,6 @@ services:
   # Combined Backend + Frontend Service
   - name: web
     type: web
-    source_dir: /
     dockerfile_path: Dockerfile
     http_port: 3000
     instance_count: 1
