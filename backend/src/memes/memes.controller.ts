@@ -74,6 +74,40 @@ export class MemesController {
     return this.memesService.create(memeData);
   }
 
+  @Get('image/:filename')
+  async getImage(@Param('filename') filename: string, @Res() res: Response) {
+    const filePath = join(process.cwd(), 'uploads', 'memes', filename);
+    console.log('Attempting to serve image from:', filePath);
+    console.log('File exists:', existsSync(filePath));
+    
+    if (!existsSync(filePath)) {
+      return res.status(404).json({ error: 'Image not found', path: filePath });
+    }
+    
+    return res.sendFile(filePath);
+  }
+
+  @Get('debug/files')
+  async debugFiles() {
+    const { readdirSync } = require('fs');
+    const uploadPath = join(process.cwd(), 'uploads', 'memes');
+    try {
+      const files = readdirSync(uploadPath);
+      return {
+        uploadPath,
+        exists: existsSync(uploadPath),
+        files,
+        count: files.length,
+      };
+    } catch (error) {
+      return {
+        uploadPath,
+        exists: existsSync(uploadPath),
+        error: error.message,
+      };
+    }
+  }
+
   @Delete(':id')
   delete(@Param('id') id: string): { success: boolean } {
     const success = this.memesService.delete(id);

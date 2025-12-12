@@ -2,35 +2,28 @@ name: shaksite
 region: nyc
 
 services:
-  # Backend API Service
-  - name: backend
+  # Combined Backend + Frontend Service
+  - name: web
     type: web
-    source_dir: backend
     dockerfile_path: Dockerfile
     http_port: 3000
     instance_count: 1
     instance_size_slug: basic-xxs
-    routes:
-      - path: /api
     envs:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: "3000"
-      - key: FRONTEND_URL
-        scope: RUN_TIME
-        value: ${APP_DOMAIN}
     health_check:
       http_path: /api/quotes
+    # Mount volumes for persistent storage
+    mounts:
+      - path: /app/uploads
+        source: shaksite-data
+      - path: /app/data
+        source: shaksite-json
 
-static_sites:
-  # Frontend Static Site
-  - name: frontend
-    source_dir: frontend
-    output_dir: dist/class-schedule/browser
-    catchall_document: index.html
-    routes:
-      - path: /
-    envs:
-      - key: NODE_ENV
-        value: production
+# Define volumes for persistent storage
+volumes:
+  - name: shaksite-data
+  - name: shaksite-json

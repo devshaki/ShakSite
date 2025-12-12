@@ -92,7 +92,8 @@ export class AdminMemes {
   }
 
   getMemeUrl(filename: string): string {
-    const url = `/uploads/memes/${filename}`;
+    // Serve images through API endpoint instead of static serving
+    const url = `${this.apiUrl}/image/${filename}`;
     console.log('Loading meme image:', url);
     return url;
   }
