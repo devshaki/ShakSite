@@ -7,7 +7,10 @@ async function bootstrap() {
   // Enable CORS - allow frontend origin
   const allowedOrigins =
     process.env.NODE_ENV === 'production'
-      ? [process.env.FRONTEND_URL || 'https://your-domain.com']
+      ? [
+          process.env.FRONTEND_URL || 'https://lobster-app-vfvxz.ondigitalocean.app',
+          'https://lobster-app-vfvxz.ondigitalocean.app'
+        ]
       : ['http://localhost:4200'];
 
   app.enableCors({
