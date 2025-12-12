@@ -38,5 +38,6 @@ async function bootstrap() {
   console.log(`📁 Serving frontend from root`);
   console.log(`🔌 API available at /api`);
   console.log(`📂 Uploads directory: ${uploadsPath}`);
+  console.log(`📂 Static uploads served from: ${join(process.cwd(), 'uploads')}`);
 }
 bootstrap();

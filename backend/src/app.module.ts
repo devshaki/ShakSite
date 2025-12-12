@@ -13,9 +13,9 @@ import { MemesModule } from './memes/memes.module';
       rootPath: join(__dirname, '..', 'public'),
       exclude: ['/api*', '/uploads*'],
     }),
-    // Serve uploaded files
+    // Serve uploaded files from app root
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'uploads'),
+      rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
     QuotesModule,

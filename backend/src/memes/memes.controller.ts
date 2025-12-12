@@ -7,10 +7,13 @@ import {
   UseInterceptors,
   UploadedFile,
   Body,
+  Res,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { Response } from 'express';
+import { existsSync } from 'fs';
 import { MemesService } from './memes.service';
 import { Meme } from './meme.interface';
 
