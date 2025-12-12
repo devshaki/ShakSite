@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  // Uses same domain with /api path routing
-  apiUrl: '/api',
+  // Backend is on the main app domain with /api routing
+  // Or use full backend service URL: https://backend-xxxxx.ondigitalocean.app/api
+  apiUrl: 'https://lobster-app-vfvxz.ondigitalocean.app/api',
 };

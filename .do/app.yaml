@@ -20,8 +20,6 @@ services:
         value: ${APP_DOMAIN}
     health_check:
       http_path: /api/quotes
-    routes:
-      - path: /api
 
 static_sites:
   # Frontend Static Site
@@ -29,10 +27,7 @@ static_sites:
     source_dir: frontend
     build_command: npm install && npm run build -- --configuration production
     output_dir: dist/shak-site/browser
-    routes:
-      - path: /
+    catchall_document: index.html
     envs:
       - key: NODE_ENV
         value: production
-      - key: API_URL
-        value: ${backend.URL}/api
