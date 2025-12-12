@@ -1,0 +1,42 @@
+name: shaksite
+region: nyc
+services:
+  # Backend API Service
+  - name: backend
+    type: web
+    source_dir: backend
+    environment_slug: node-js
+    build_command: npm install && npm run build
+    run_command: npm run start:prod
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+      - key: FRONTEND_URL
+        scope: RUN_TIME
+        value: ${APP_URL}
+    health_check:
+      http_path: /api/quotes
+
+  # Frontend Static Site
+  - name: frontend
+    type: static
+    source_dir: frontend
+    environment_slug: node-js
+    build_command: npm install && npm run build -- --configuration production
+    output_dir: dist/shak-site/browser
+    routes:
+      - path: /
+    envs:
+      - key: NODE_ENV
+        value: production
+
+# Optional: Add a database or other services here
+# databases:
+#   - name: db
+#     engine: PG
+#     version: "12"

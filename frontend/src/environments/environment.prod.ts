@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api' // Will use same domain as frontend in production
+  // This will be replaced during build or use the backend service URL
+  apiUrl: 'https://shaksite-backend.ondigitalocean.app/api'
 };
