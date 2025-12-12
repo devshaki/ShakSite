@@ -6,8 +6,7 @@ services:
     type: web
     source_dir: backend
     environment_slug: node-js
-    build_command: npm install && npm run build
-    run_command: npm run start:prod
+    dockerfile_path: backend/Dockerfile
     http_port: 3000
     instance_count: 1
     instance_size_slug: basic-xxs
@@ -22,9 +21,9 @@ services:
     health_check:
       http_path: /api/quotes
 
+static_sites:
   # Frontend Static Site
   - name: frontend
-    type: static
     source_dir: frontend
     environment_slug: node-js
     build_command: npm install && npm run build -- --configuration production
