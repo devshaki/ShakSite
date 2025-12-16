@@ -87,7 +87,9 @@ export class ScheduleGrid implements OnInit, OnDestroy {
         const upcomingWindowEnd = addDays(today, UPCOMING_EXAM_LOOKAHEAD_DAYS);
 
         const upcoming = allExams
-          .filter((exam) => isWithinDateRange(exam.date, today, upcomingWindowEnd))
+          .filter((exam) =>
+            isWithinDateRange(new Date(exam.date), today, upcomingWindowEnd)
+          )
           .sort((firstExam, secondExam) =>
             new Date(firstExam.date).getTime() - new Date(secondExam.date).getTime()
           )

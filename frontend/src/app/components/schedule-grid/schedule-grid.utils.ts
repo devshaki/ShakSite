@@ -24,7 +24,7 @@ export function addDays(base: Date, daysToAdd: number): Date {
   return result;
 }
 
-export function isWithinDateRange(date: string, start: Date, end: Date): boolean {
+export function isWithinDateRange(date: Date, start: Date, end: Date): boolean {
   const currentDate = new Date(date);
   currentDate.setHours(0, 0, 0, 0);
   return currentDate >= start && currentDate <= end;
@@ -37,11 +37,14 @@ export function compareTasks(firstTask: Task, secondTask: Task): number {
     return priorityDifference;
   }
 
-  return (
-    new Date(firstTask.dueDate).getTime() - new Date(secondTask.dueDate).getTime()
-  );
+  return getDueDateValue(firstTask) - getDueDateValue(secondTask);
 }
 
 function getPriorityRank(task: Task): number {
   return TASK_PRIORITY_ORDER[task.priority ?? DEFAULT_TASK_PRIORITY];
+}
+
+function getDueDateValue(task: Task): number {
+  const parsed = new Date(task.dueDate ?? '').getTime();
+  return Number.isNaN(parsed) ? Number.POSITIVE_INFINITY : parsed;
 }
