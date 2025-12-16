@@ -115,13 +115,13 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     });
   }
 
-  getTimeSlotsForDay(dayIndex: number): DisplaySlot[] {
+  getDisplaySlotsForDay(dayIndex: number): DisplaySlot[] {
     const day = this.schedule()[dayIndex];
     if (!day) return [];
     return day.slots || [];
   }
 
-  isCurrentSlot(dayName: string, slot: TimeSlot): boolean {
+  isCurrentSlot(dayName: string, slot: DisplaySlot): boolean {
     const current = this.currentPeriod();
     if (!current) return false;
     return (

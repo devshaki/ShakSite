@@ -67,7 +67,7 @@
     <div class="day-column">
       <div class="day-header">{{ day.day }}</div>
       
-      @for (slot of getTimeSlotsForDay($index); track slot.start) {
+      @for (slot of getDisplaySlotsForDay($index); track slot.start) {
         <div 
           class="time-slot"
           [class.break]="slot.isBreak"
