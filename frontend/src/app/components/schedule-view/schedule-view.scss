@@ -71,10 +71,8 @@
         --arrow-offset-main: 16px;
         --arrow-offset-secondary: 12px;
         --arrow-vertical-position: 55%;
-        --theme-select-shadow: 0 8px 18px color-mix(in srgb, var(--ctp-overlay0) 30%, transparent);
-        --theme-select-focus-shadow:
-          0 8px 22px color-mix(in srgb, var(--ctp-overlay1) 35%, transparent),
-          0 0 0 3px color-mix(in srgb, var(--ctp-blue) 25%, transparent);
+        --theme-select-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+        --theme-select-focus-shadow: 0 8px 22px rgba(0, 0, 0, 0.12), 0 0 0 3px rgba(0, 0, 0, 0.05);
         appearance: none;
         min-width: 150px;
         background: var(--ctp-surface0);
@@ -88,13 +86,18 @@
           background-color 0.2s ease;
         outline: none;
         box-shadow: var(--theme-select-shadow);
-        /* Chevron arrow built from two linear-gradient triangles */
-        background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
-          linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
-        background-position: calc(100% - var(--arrow-offset-main)) var(--arrow-vertical-position),
-          calc(100% - var(--arrow-offset-secondary)) var(--arrow-vertical-position);
-        background-size: var(--arrow-size) var(--arrow-size), var(--arrow-size) var(--arrow-size);
-        background-repeat: no-repeat;
+        position: relative;
+
+        &::after {
+          content: '▾';
+          position: absolute;
+          inset-inline-end: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 0.85rem;
+          color: var(--ctp-subtext0);
+          pointer-events: none;
+        }
 
         &:hover,
         &:focus-visible {
@@ -110,6 +113,15 @@
         }
       }
     }
+  }
+}
+
+@supports (color: color-mix(in srgb, black 50%, white)) {
+  .navbar .nav-links .theme-selector .theme-select {
+    --theme-select-shadow: 0 8px 18px color-mix(in srgb, var(--ctp-overlay0) 30%, transparent);
+    --theme-select-focus-shadow:
+      0 8px 22px color-mix(in srgb, var(--ctp-overlay1) 35%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--ctp-blue) 25%, transparent);
   }
 }
 
