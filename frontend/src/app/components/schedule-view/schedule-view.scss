@@ -61,16 +61,13 @@
       padding: 0.35rem 0.75rem;
       color: var(--ctp-text);
       font-weight: 600;
+      position: relative;
 
       .theme-label {
         font-size: 0.9rem;
       }
 
       .theme-select {
-        --arrow-size: 8px;
-        --arrow-offset-main: 16px;
-        --arrow-offset-secondary: 12px;
-        --arrow-vertical-position: 55%;
         --theme-select-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
         --theme-select-focus-shadow: 0 8px 22px rgba(0, 0, 0, 0.12), 0 0 0 3px rgba(0, 0, 0, 0.05);
         appearance: none;
@@ -86,12 +83,6 @@
           background-color 0.2s ease;
         outline: none;
         box-shadow: var(--theme-select-shadow);
-        background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
-          linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
-        background-position: calc(100% - var(--arrow-offset-main)) var(--arrow-vertical-position),
-          calc(100% - var(--arrow-offset-secondary)) var(--arrow-vertical-position);
-        background-size: var(--arrow-size) var(--arrow-size), var(--arrow-size) var(--arrow-size);
-        background-repeat: no-repeat;
 
         &:hover,
         &:focus-visible {
@@ -106,11 +97,23 @@
           color: var(--ctp-text);
         }
       }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset-inline-end: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: var(--ctp-subtext0) transparent transparent transparent;
+        pointer-events: none;
+      }
     }
   }
 }
 
-@supports (color: color-mix(in srgb, black 50%, white)) {
+@supports (color: color-mix(in srgb, var(--ctp-overlay0) 30%, transparent)) {
   .navbar .nav-links .theme-selector .theme-select {
     --theme-select-shadow: 0 8px 18px color-mix(in srgb, var(--ctp-overlay0) 30%, transparent);
     --theme-select-focus-shadow:
