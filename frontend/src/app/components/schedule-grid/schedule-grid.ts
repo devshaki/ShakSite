@@ -22,6 +22,7 @@ import {
   addDays,
   getStartOfToday,
   isWithinDateRange,
+  getDateValue,
 } from './schedule-grid.utils';
 
 type CurrentSlotContext = {
@@ -88,12 +89,20 @@ export class ScheduleGrid implements OnInit, OnDestroy {
 
         const upcoming = allExams
           .filter((exam) => {
-            if (!exam.date) return false;
-            return isWithinDateRange(new Date(exam.date), today, upcomingWindowEnd);
+            const examTimestamp = getDateValue(exam.date);
+            if (!Number.isFinite(examTimestamp)) return false;
+            return isWithinDateRange(new Date(examTimestamp), today, upcomingWindowEnd);
           })
-          .sort((firstExam, secondExam) =>
-            new Date(firstExam.date).getTime() - new Date(secondExam.date).getTime()
-          )
+          .sort((firstExam, secondExam) => {
+            const firstDate = getDateValue(firstExam.date);
+            const secondDate = getDateValue(secondExam.date);
+
+            if (!Number.isFinite(firstDate) && !Number.isFinite(secondDate)) return 0;
+            if (!Number.isFinite(firstDate)) return 1;
+            if (!Number.isFinite(secondDate)) return -1;
+
+            return firstDate - secondDate;
+          })
           .slice(0, MAX_ITEMS_TO_DISPLAY);
 
         this.upcomingExams.set(upcoming);
