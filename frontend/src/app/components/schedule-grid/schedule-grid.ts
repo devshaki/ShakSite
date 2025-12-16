@@ -91,7 +91,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
           .filter((exam) => {
             const examTimestamp = getDateValue(exam.date);
             if (!Number.isFinite(examTimestamp)) return false;
-            return isWithinDateRange(new Date(examTimestamp), today, upcomingWindowEnd);
+            return isWithinDateRange(examTimestamp, today, upcomingWindowEnd);
           })
           .sort((firstExam, secondExam) => {
             const firstDate = getDateValue(firstExam.date);
