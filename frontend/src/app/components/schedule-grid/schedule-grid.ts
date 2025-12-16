@@ -1,10 +1,34 @@
-import { Component, OnInit, OnDestroy, computed, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  computed,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScheduleService } from '../../services/schedule.service';
 import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
-import { TimeSlot } from '../../models/schedule.models';
+import { Group, TimeSlot } from '../../models/schedule.models';
 import { ExamDate, Task } from '../../models/content.models';
+import { DisplayDay, DisplaySlot } from '../../services/schedule.service';
+import {
+  SCHEDULE_REFRESH_INTERVAL_MS,
+  UPCOMING_EXAM_LOOKAHEAD_DAYS,
+  MAX_ITEMS_TO_DISPLAY,
+  compareTasks,
+  addDays,
+  getStartOfToday,
+  isWithinDateRange,
+  getDateValue,
+} from './schedule-grid.utils';
+
+type CurrentSlotContext = {
+  day: string;
+  timeSlot: TimeSlot;
+};
 
 @Component({
   selector: 'app-schedule-grid',
@@ -15,10 +39,10 @@ import { ExamDate, Task } from '../../models/content.models';
 export class ScheduleGrid implements OnInit, OnDestroy {
   private intervalId?: number;
 
-  schedule: any;
-  selectedGroup: any;
-  showOnlyToday: any;
-  currentTime: any;
+  schedule: Signal<DisplayDay[]>;
+  selectedGroup: WritableSignal<Group>;
+  showOnlyToday: Signal<boolean>;
+  currentPeriod: Signal<CurrentSlotContext | null>;
 
   upcomingExams = signal<ExamDate[]>([]);
   incompleteTasks = signal<Task[]>([]);
@@ -32,7 +56,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     this.selectedGroup = this.scheduleService.selectedGroup;
     this.showOnlyToday = this.scheduleService.showOnlyToday;
 
-    this.currentTime = computed(() => {
+    this.currentPeriod = computed<CurrentSlotContext | null>(() => {
       const period = this.scheduleService.getCurrentPeriod();
       if (!period) return null;
       return {
@@ -41,15 +65,14 @@ export class ScheduleGrid implements OnInit, OnDestroy {
       };
     });
 
-    this.loadExamsAndTasks();
+    this.refreshUpcomingItems();
   }
 
   ngOnInit(): void {
-    // Force update every minute to refresh current time highlighting
     this.intervalId = window.setInterval(() => {
       this.scheduleService.selectedGroup.set(this.scheduleService.selectedGroup());
-      this.loadExamsAndTasks(); // Refresh data
-    }, 60000);
+      this.refreshUpcomingItems(); // Refresh data
+    }, SCHEDULE_REFRESH_INTERVAL_MS);
   }
 
   ngOnDestroy(): void {
@@ -58,49 +81,47 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     }
   }
 
-  loadExamsAndTasks(): void {
-    // Load exams from backend
+  refreshUpcomingItems(): void {
     this.examsService.getAll().subscribe({
       next: (allExams) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Get exams in the next 30 days
-        const thirtyDaysFromNow = new Date(today);
-        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+        const today = getStartOfToday();
+        const upcomingWindowEnd = addDays(today, UPCOMING_EXAM_LOOKAHEAD_DAYS);
 
         const upcoming = allExams
-          .filter((exam) => {
-            const examDate = new Date(exam.date);
-            examDate.setHours(0, 0, 0, 0);
-            return examDate >= today && examDate <= thirtyDaysFromNow;
-          })
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-          .slice(0, 5); // Show max 5 exams
+          .reduce(
+            (acc, exam) => {
+              if (!exam.date.trim()) {
+                return acc;
+              }
+
+              const timestamp = getDateValue(exam.date);
+              if (
+                !Number.isFinite(timestamp) ||
+                !isWithinDateRange(timestamp, today, upcomingWindowEnd)
+              ) {
+                return acc;
+              }
+
+              acc.push({ exam, timestamp });
+              return acc;
+            },
+            [] as { exam: ExamDate; timestamp: number }[]
+          )
+          .sort((first, second) => first.timestamp - second.timestamp)
+          .map(({ exam }) => exam)
+          .slice(0, MAX_ITEMS_TO_DISPLAY);
 
         this.upcomingExams.set(upcoming);
       },
       error: (err) => console.error('Failed to load exams:', err),
     });
 
-    // Load tasks from backend
     this.tasksService.getAll().subscribe({
       next: (allTasks) => {
         const incomplete = allTasks
           .filter((task) => !task.completed)
-          .sort((a, b) => {
-            // Sort by priority first, then by due date
-            const priorityOrder = { high: 0, medium: 1, low: 2 };
-            const aPriority = priorityOrder[a.priority || 'medium'];
-            const bPriority = priorityOrder[b.priority || 'medium'];
-
-            if (aPriority !== bPriority) {
-              return aPriority - bPriority;
-            }
-
-            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-          })
-          .slice(0, 5); // Show max 5 tasks
+          .sort((firstTask, secondTask) => compareTasks(firstTask, secondTask))
+          .slice(0, MAX_ITEMS_TO_DISPLAY);
 
         this.incompleteTasks.set(incomplete);
       },
@@ -108,14 +129,14 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     });
   }
 
-  getTimeSlotsForDay(dayIndex: number): TimeSlot[] {
+  getDisplaySlotsForDay(dayIndex: number): DisplaySlot[] {
     const day = this.schedule()[dayIndex];
     if (!day) return [];
     return day.slots || [];
   }
 
-  isCurrentSlot(dayName: string, slot: TimeSlot): boolean {
-    const current = this.currentTime();
+  isCurrentSlot(dayName: string, slot: DisplaySlot): boolean {
+    const current = this.currentPeriod();
     if (!current) return false;
     return (
       current.day === dayName &&
@@ -124,11 +145,11 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     );
   }
 
-  getSlotColor(slot: any): string {
+  getSlotColor(slot: DisplaySlot): string {
     return slot.classInfo?.color || 'transparent';
   }
 
-  getSlotDetails(slot: any): string {
+  getSlotDetails(slot: DisplaySlot): string {
     const parts = [];
     if (slot.room) parts.push(`חדר ${slot.room}`);
     if (slot.classInfo?.teacher) parts.push(slot.classInfo.teacher);

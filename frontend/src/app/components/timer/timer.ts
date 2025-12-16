@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { ScheduleService } from '../../services/schedule.service';
 import { CurrentPeriod } from '../../models/schedule.models';
 
+const PERIOD_REFRESH_INTERVAL_MS = 10_000;
+
 @Component({
   selector: 'app-timer',
   imports: [],
@@ -15,10 +17,10 @@ export class Timer implements OnInit, OnDestroy {
   constructor(private scheduleService: ScheduleService) {}
 
   ngOnInit(): void {
-    this.updatePeriod();
+    this.updateCurrentPeriod();
     this.intervalId = window.setInterval(() => {
-      this.updatePeriod();
-    }, 10000); // Update every 10 seconds
+      this.updateCurrentPeriod();
+    }, PERIOD_REFRESH_INTERVAL_MS);
   }
 
   ngOnDestroy(): void {
@@ -27,7 +29,7 @@ export class Timer implements OnInit, OnDestroy {
     }
   }
 
-  private updatePeriod(): void {
+  private updateCurrentPeriod(): void {
     this.currentPeriod.set(this.scheduleService.getCurrentPeriod());
   }
 
