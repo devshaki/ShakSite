@@ -88,8 +88,8 @@
         box-shadow: var(--theme-select-shadow);
         background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
           linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
-        background-position: calc(100% - var(--arrow-offset-main)) 50%,
-          calc(100% - var(--arrow-offset-secondary)) 50%;
+        background-position: calc(100% - var(--arrow-offset-main)) var(--arrow-vertical-position),
+          calc(100% - var(--arrow-offset-secondary)) var(--arrow-vertical-position);
         background-size: var(--arrow-size) var(--arrow-size), var(--arrow-size) var(--arrow-size);
         background-repeat: no-repeat;
 
