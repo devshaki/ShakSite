@@ -67,6 +67,14 @@
       }
 
       .theme-select {
+        --arrow-size: 8px;
+        --arrow-offset-main: 16px;
+        --arrow-offset-secondary: 12px;
+        --arrow-vertical-position: 55%;
+        --theme-select-shadow: 0 8px 18px color-mix(in srgb, var(--ctp-overlay0) 30%, transparent);
+        --theme-select-focus-shadow: 0 8px 22px
+          color-mix(in srgb, var(--ctp-overlay1) 35%, transparent),
+          0 0 0 3px color-mix(in srgb, var(--ctp-blue) 25%, transparent);
         appearance: none;
         min-width: 150px;
         background: var(--ctp-surface0);
@@ -79,11 +87,12 @@
         transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease,
           background-color 0.2s ease;
         outline: none;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+        box-shadow: var(--theme-select-shadow);
         background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
           linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
-        background-position: calc(100% - 16px) 55%, calc(100% - 12px) 55%;
-        background-size: 8px 8px, 8px 8px;
+        background-position: calc(100% - var(--arrow-offset-main)) var(--arrow-vertical-position),
+          calc(100% - var(--arrow-offset-secondary)) var(--arrow-vertical-position);
+        background-size: var(--arrow-size) var(--arrow-size), var(--arrow-size) var(--arrow-size);
         background-repeat: no-repeat;
 
         &:hover,
@@ -91,7 +100,7 @@
           color: var(--ctp-blue);
           border-color: var(--ctp-blue);
           background-color: var(--ctp-surface2);
-          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12), 0 0 0 3px rgba(0, 0, 0, 0.05);
+          box-shadow: var(--theme-select-focus-shadow);
         }
 
         option {
