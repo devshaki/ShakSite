@@ -86,18 +86,12 @@
           background-color 0.2s ease;
         outline: none;
         box-shadow: var(--theme-select-shadow);
-        position: relative;
-
-        &::after {
-          content: '▾';
-          position: absolute;
-          inset-inline-end: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          font-size: 0.85rem;
-          color: var(--ctp-subtext0);
-          pointer-events: none;
-        }
+        background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
+          linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
+        background-position: calc(100% - var(--arrow-offset-main)) 50%,
+          calc(100% - var(--arrow-offset-secondary)) 50%;
+        background-size: var(--arrow-size) var(--arrow-size), var(--arrow-size) var(--arrow-size);
+        background-repeat: no-repeat;
 
         &:hover,
         &:focus-visible {
