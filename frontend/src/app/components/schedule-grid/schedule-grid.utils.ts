@@ -1,7 +1,6 @@
 import { Task } from '../../models/content.models';
-import { TimeSlot } from '../../models/schedule.models';
 
-export const REFRESH_INTERVAL_MS = 60_000;
+export const SCHEDULE_REFRESH_INTERVAL_MS = 60_000;
 export const UPCOMING_EXAM_LOOKAHEAD_DAYS = 30;
 export const MAX_ITEMS_TO_DISPLAY = 5;
 export const DEFAULT_TASK_PRIORITY: NonNullable<Task['priority']> = 'medium';
@@ -24,6 +23,10 @@ export function addDays(base: Date, daysToAdd: number): Date {
   return result;
 }
 
+/**
+ * Checks whether the provided timestamp falls on or between the supplied start/end dates.
+ * Comparison is done at day precision (hours/minutes zeroed).
+ */
 export function isWithinDateRange(
   dateToCheckMs: number,
   start: Date,
@@ -34,6 +37,10 @@ export function isWithinDateRange(
   return currentDate >= start && currentDate <= end;
 }
 
+/**
+ * Orders tasks by priority (high -> low) and then by due date (earliest first).
+ * Invalid or empty dates are treated as infinitely far in the future.
+ */
 export function compareTasks(firstTask: Task, secondTask: Task): number {
   const priorityDifference =
     getPriorityRank(firstTask) - getPriorityRank(secondTask);
@@ -41,22 +48,17 @@ export function compareTasks(firstTask: Task, secondTask: Task): number {
     return priorityDifference;
   }
 
-  return getDueDateValue(firstTask) - getDueDateValue(secondTask);
+  return getDateValue(firstTask.dueDate) - getDateValue(secondTask.dueDate);
 }
 
 function getPriorityRank(task: Task): number {
   return TASK_PRIORITY_ORDER[task.priority ?? DEFAULT_TASK_PRIORITY];
 }
 
-function getDueDateValue(task: Task): number {
-  const trimmedDueDate = task.dueDate.trim();
-  if (!trimmedDueDate) {
-    return Number.POSITIVE_INFINITY;
-  }
-
-  return getDateValue(trimmedDueDate);
-}
-
+/**
+ * Safely converts a date input to a numeric timestamp.
+ * Returns Number.POSITIVE_INFINITY for invalid or empty values.
+ */
 export function getDateValue(
   dateInput: string | Date | null | undefined
 ): number {

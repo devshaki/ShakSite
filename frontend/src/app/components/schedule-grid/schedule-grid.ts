@@ -15,7 +15,7 @@ import { Group, TimeSlot } from '../../models/schedule.models';
 import { ExamDate, Task } from '../../models/content.models';
 import { DisplayDay, DisplaySlot } from '../../services/schedule.service';
 import {
-  REFRESH_INTERVAL_MS,
+  SCHEDULE_REFRESH_INTERVAL_MS,
   UPCOMING_EXAM_LOOKAHEAD_DAYS,
   MAX_ITEMS_TO_DISPLAY,
   compareTasks,
@@ -72,7 +72,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     this.intervalId = window.setInterval(() => {
       this.scheduleService.selectedGroup.set(this.scheduleService.selectedGroup());
       this.refreshUpcomingItems(); // Refresh data
-    }, REFRESH_INTERVAL_MS);
+    }, SCHEDULE_REFRESH_INTERVAL_MS);
   }
 
   ngOnDestroy(): void {
