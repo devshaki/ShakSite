@@ -14,16 +14,15 @@ import { TasksService } from '../../services/tasks.service';
 import { Group, TimeSlot } from '../../models/schedule.models';
 import { ExamDate, Task } from '../../models/content.models';
 import { DisplayDay, DisplaySlot } from '../../services/schedule.service';
-
-const REFRESH_INTERVAL_MS = 60_000;
-const UPCOMING_EXAM_LOOKAHEAD_DAYS = 30;
-const MAX_ITEMS_TO_DISPLAY = 5;
-const DEFAULT_TASK_PRIORITY: NonNullable<Task['priority']> = 'medium';
-const TASK_PRIORITY_ORDER: Record<NonNullable<Task['priority']>, number> = {
-  high: 0,
-  medium: 1,
-  low: 2,
-};
+import {
+  REFRESH_INTERVAL_MS,
+  UPCOMING_EXAM_LOOKAHEAD_DAYS,
+  MAX_ITEMS_TO_DISPLAY,
+  compareTasks,
+  addDays,
+  getStartOfToday,
+  isWithinDateRange,
+} from './schedule-grid.utils';
 
 type CurrentSlotContext = {
   day: string;
@@ -69,7 +68,6 @@ export class ScheduleGrid implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Force update every minute to refresh current time highlighting
     this.intervalId = window.setInterval(() => {
       this.scheduleService.selectedGroup.set(this.scheduleService.selectedGroup());
       this.refreshUpcomingItems(); // Refresh data
@@ -83,31 +81,29 @@ export class ScheduleGrid implements OnInit, OnDestroy {
   }
 
   refreshUpcomingItems(): void {
-    // Load exams from backend
     this.examsService.getAll().subscribe({
       next: (allExams) => {
-        const today = this.getStartOfToday();
-        const upcomingWindowEnd = this.addDays(today, UPCOMING_EXAM_LOOKAHEAD_DAYS);
+        const today = getStartOfToday();
+        const upcomingWindowEnd = addDays(today, UPCOMING_EXAM_LOOKAHEAD_DAYS);
 
         const upcoming = allExams
-          .filter((exam) => this.isWithinDateRange(exam.date, today, upcomingWindowEnd))
+          .filter((exam) => isWithinDateRange(exam.date, today, upcomingWindowEnd))
           .sort((firstExam, secondExam) =>
             new Date(firstExam.date).getTime() - new Date(secondExam.date).getTime()
           )
-          .slice(0, MAX_ITEMS_TO_DISPLAY); // Show max 5 exams
+          .slice(0, MAX_ITEMS_TO_DISPLAY);
 
         this.upcomingExams.set(upcoming);
       },
       error: (err) => console.error('Failed to load exams:', err),
     });
 
-    // Load tasks from backend
     this.tasksService.getAll().subscribe({
       next: (allTasks) => {
         const incomplete = allTasks
           .filter((task) => !task.completed)
-          .sort((firstTask, secondTask) => this.compareTasks(firstTask, secondTask))
-          .slice(0, MAX_ITEMS_TO_DISPLAY); // Show max 5 tasks
+          .sort((firstTask, secondTask) => compareTasks(firstTask, secondTask))
+          .slice(0, MAX_ITEMS_TO_DISPLAY);
 
         this.incompleteTasks.set(incomplete);
       },
@@ -141,39 +137,5 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     if (slot.classInfo?.teacher) parts.push(slot.classInfo.teacher);
     if (slot.notes) parts.push(slot.notes);
     return parts.join(' • ');
-  }
-
-  private getStartOfToday(): Date {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return today;
-  }
-
-  private addDays(base: Date, daysToAdd: number): Date {
-    const result = new Date(base);
-    result.setDate(result.getDate() + daysToAdd);
-    return result;
-  }
-
-  private isWithinDateRange(date: string, start: Date, end: Date): boolean {
-    const currentDate = new Date(date);
-    currentDate.setHours(0, 0, 0, 0);
-    return currentDate >= start && currentDate <= end;
-  }
-
-  private compareTasks(firstTask: Task, secondTask: Task): number {
-    const priorityDifference =
-      this.getPriorityRank(firstTask) - this.getPriorityRank(secondTask);
-    if (priorityDifference !== 0) {
-      return priorityDifference;
-    }
-
-    return (
-      new Date(firstTask.dueDate).getTime() - new Date(secondTask.dueDate).getTime()
-    );
-  }
-
-  private getPriorityRank(task: Task): number {
-    return TASK_PRIORITY_ORDER[task.priority ?? DEFAULT_TASK_PRIORITY];
   }
 }
