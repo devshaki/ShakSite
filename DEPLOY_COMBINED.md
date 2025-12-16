@@ -137,7 +137,7 @@ Visit: http://localhost:3000
 - All API routes are under `/api/*`
 - Uploaded files are under `/uploads/*`
 - This is a monolithic deployment (easier for small apps)
-- Data persists in the container's filesystem (consider adding volumes for production)
+- Data persists across redeploys when using the App Platform volumes defined in `.do/app.yaml` (`/app/uploads` and `/app/data`)
 
 ## Success Indicators ✅
 

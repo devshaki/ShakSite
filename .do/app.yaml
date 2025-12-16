@@ -17,13 +17,15 @@ services:
     health_check:
       http_path: /api/quotes
     # Mount volumes for persistent storage
-    mounts:
-      - path: /app/uploads
-        source: shaksite-data
-      - path: /app/data
-        source: shaksite-json
+    volume_mounts:
+      - volume_name: shaksite-data
+        mount_path: /app/uploads
+      - volume_name: shaksite-json
+        mount_path: /app/data
 
 # Define volumes for persistent storage
 volumes:
   - name: shaksite-data
+    size_gigabytes: 1
   - name: shaksite-json
+    size_gigabytes: 1
