@@ -49,10 +49,6 @@ function getPriorityRank(task: Task): number {
 }
 
 function getDueDateValue(task: Task): number {
-  if (!task.dueDate) {
-    return Number.POSITIVE_INFINITY;
-  }
-
   const trimmedDueDate = task.dueDate.trim();
   if (!trimmedDueDate) {
     return Number.POSITIVE_INFINITY;

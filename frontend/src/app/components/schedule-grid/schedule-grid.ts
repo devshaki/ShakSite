@@ -90,6 +90,10 @@ export class ScheduleGrid implements OnInit, OnDestroy {
         const upcoming = allExams
           .reduce(
             (acc, exam) => {
+              if (!exam.date) {
+                return acc;
+              }
+
               const timestamp = getDateValue(exam.date);
               if (
                 !Number.isFinite(timestamp) ||
