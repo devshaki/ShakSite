@@ -1,10 +1,34 @@
-import { Component, OnInit, OnDestroy, computed, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  computed,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ScheduleService } from '../../services/schedule.service';
 import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
-import { TimeSlot } from '../../models/schedule.models';
+import { Group, TimeSlot } from '../../models/schedule.models';
 import { ExamDate, Task } from '../../models/content.models';
+import { DisplayDay, DisplaySlot } from '../../services/schedule.service';
+
+const REFRESH_INTERVAL_MS = 60_000;
+const UPCOMING_EXAM_LOOKAHEAD_DAYS = 30;
+const MAX_ITEMS_TO_DISPLAY = 5;
+const DEFAULT_TASK_PRIORITY: NonNullable<Task['priority']> = 'medium';
+const TASK_PRIORITY_ORDER: Record<NonNullable<Task['priority']>, number> = {
+  high: 0,
+  medium: 1,
+  low: 2,
+};
+
+type CurrentSlotContext = {
+  day: string;
+  timeSlot: TimeSlot;
+};
 
 @Component({
   selector: 'app-schedule-grid',
@@ -15,10 +39,10 @@ import { ExamDate, Task } from '../../models/content.models';
 export class ScheduleGrid implements OnInit, OnDestroy {
   private intervalId?: number;
 
-  schedule: any;
-  selectedGroup: any;
-  showOnlyToday: any;
-  currentTime: any;
+  schedule: Signal<DisplayDay[]>;
+  selectedGroup: WritableSignal<Group>;
+  showOnlyToday: Signal<boolean>;
+  currentPeriod: Signal<CurrentSlotContext | null>;
 
   upcomingExams = signal<ExamDate[]>([]);
   incompleteTasks = signal<Task[]>([]);
@@ -32,7 +56,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     this.selectedGroup = this.scheduleService.selectedGroup;
     this.showOnlyToday = this.scheduleService.showOnlyToday;
 
-    this.currentTime = computed(() => {
+    this.currentPeriod = computed<CurrentSlotContext | null>(() => {
       const period = this.scheduleService.getCurrentPeriod();
       if (!period) return null;
       return {
@@ -41,15 +65,15 @@ export class ScheduleGrid implements OnInit, OnDestroy {
       };
     });
 
-    this.loadExamsAndTasks();
+    this.refreshUpcomingItems();
   }
 
   ngOnInit(): void {
     // Force update every minute to refresh current time highlighting
     this.intervalId = window.setInterval(() => {
       this.scheduleService.selectedGroup.set(this.scheduleService.selectedGroup());
-      this.loadExamsAndTasks(); // Refresh data
-    }, 60000);
+      this.refreshUpcomingItems(); // Refresh data
+    }, REFRESH_INTERVAL_MS);
   }
 
   ngOnDestroy(): void {
@@ -58,25 +82,19 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     }
   }
 
-  loadExamsAndTasks(): void {
+  refreshUpcomingItems(): void {
     // Load exams from backend
     this.examsService.getAll().subscribe({
       next: (allExams) => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Get exams in the next 30 days
-        const thirtyDaysFromNow = new Date(today);
-        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+        const today = this.getStartOfToday();
+        const upcomingWindowEnd = this.addDays(today, UPCOMING_EXAM_LOOKAHEAD_DAYS);
 
         const upcoming = allExams
-          .filter((exam) => {
-            const examDate = new Date(exam.date);
-            examDate.setHours(0, 0, 0, 0);
-            return examDate >= today && examDate <= thirtyDaysFromNow;
-          })
-          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-          .slice(0, 5); // Show max 5 exams
+          .filter((exam) => this.isWithinDateRange(exam.date, today, upcomingWindowEnd))
+          .sort((firstExam, secondExam) =>
+            new Date(firstExam.date).getTime() - new Date(secondExam.date).getTime()
+          )
+          .slice(0, MAX_ITEMS_TO_DISPLAY); // Show max 5 exams
 
         this.upcomingExams.set(upcoming);
       },
@@ -88,19 +106,8 @@ export class ScheduleGrid implements OnInit, OnDestroy {
       next: (allTasks) => {
         const incomplete = allTasks
           .filter((task) => !task.completed)
-          .sort((a, b) => {
-            // Sort by priority first, then by due date
-            const priorityOrder = { high: 0, medium: 1, low: 2 };
-            const aPriority = priorityOrder[a.priority || 'medium'];
-            const bPriority = priorityOrder[b.priority || 'medium'];
-
-            if (aPriority !== bPriority) {
-              return aPriority - bPriority;
-            }
-
-            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
-          })
-          .slice(0, 5); // Show max 5 tasks
+          .sort((firstTask, secondTask) => this.compareTasks(firstTask, secondTask))
+          .slice(0, MAX_ITEMS_TO_DISPLAY); // Show max 5 tasks
 
         this.incompleteTasks.set(incomplete);
       },
@@ -108,14 +115,14 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     });
   }
 
-  getTimeSlotsForDay(dayIndex: number): TimeSlot[] {
+  getTimeSlotsForDay(dayIndex: number): DisplaySlot[] {
     const day = this.schedule()[dayIndex];
     if (!day) return [];
     return day.slots || [];
   }
 
   isCurrentSlot(dayName: string, slot: TimeSlot): boolean {
-    const current = this.currentTime();
+    const current = this.currentPeriod();
     if (!current) return false;
     return (
       current.day === dayName &&
@@ -124,15 +131,49 @@ export class ScheduleGrid implements OnInit, OnDestroy {
     );
   }
 
-  getSlotColor(slot: any): string {
+  getSlotColor(slot: DisplaySlot): string {
     return slot.classInfo?.color || 'transparent';
   }
 
-  getSlotDetails(slot: any): string {
+  getSlotDetails(slot: DisplaySlot): string {
     const parts = [];
     if (slot.room) parts.push(`חדר ${slot.room}`);
     if (slot.classInfo?.teacher) parts.push(slot.classInfo.teacher);
     if (slot.notes) parts.push(slot.notes);
     return parts.join(' • ');
+  }
+
+  private getStartOfToday(): Date {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  private addDays(base: Date, daysToAdd: number): Date {
+    const result = new Date(base);
+    result.setDate(result.getDate() + daysToAdd);
+    return result;
+  }
+
+  private isWithinDateRange(date: string, start: Date, end: Date): boolean {
+    const currentDate = new Date(date);
+    currentDate.setHours(0, 0, 0, 0);
+    return currentDate >= start && currentDate <= end;
+  }
+
+  private compareTasks(firstTask: Task, secondTask: Task): number {
+    const priorityDifference =
+      this.getPriorityRank(firstTask) - this.getPriorityRank(secondTask);
+    if (priorityDifference !== 0) {
+      return priorityDifference;
+    }
+
+    return (
+      new Date(firstTask.dueDate).getTime() - new Date(secondTask.dueDate).getTime()
+    );
+  }
+
+  private getPriorityRank(task: Task): number {
+    return TASK_PRIORITY_ORDER[task.priority ?? DEFAULT_TASK_PRIORITY];
   }
 }
