@@ -96,14 +96,7 @@ export class ScheduleGrid implements OnInit, OnDestroy {
             Number.isFinite(timestamp) &&
             isWithinDateRange(timestamp, today, upcomingWindowEnd)
           )
-          .sort((first, second) => {
-            if (!Number.isFinite(first.timestamp) && !Number.isFinite(second.timestamp))
-              return 0;
-            if (!Number.isFinite(first.timestamp)) return 1;
-            if (!Number.isFinite(second.timestamp)) return -1;
-
-            return first.timestamp - second.timestamp;
-          })
+          .sort((first, second) => first.timestamp - second.timestamp)
           .map(({ exam }) => exam)
           .slice(0, MAX_ITEMS_TO_DISPLAY);
 
