@@ -45,6 +45,10 @@ function getPriorityRank(task: Task): number {
 }
 
 function getDueDateValue(task: Task): number {
-  const parsed = new Date(task.dueDate ?? '').getTime();
+  if (!task.dueDate) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  const parsed = new Date(task.dueDate).getTime();
   return Number.isNaN(parsed) ? Number.POSITIVE_INFINITY : parsed;
 }
