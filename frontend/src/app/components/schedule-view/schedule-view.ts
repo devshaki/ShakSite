@@ -1,15 +1,17 @@
 import { Component, signal, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Timer } from '../timer/timer';
 import { ScheduleGrid } from '../schedule-grid/schedule-grid';
 import { ScheduleService } from '../../services/schedule.service';
 import { ThemeService } from '../../services/theme.service';
 import { QuotesService } from '../../services/quotes.service';
+import { Theme } from '../../models/theme.models';
 
 @Component({
   selector: 'app-schedule-view',
   standalone: true,
-  imports: [Timer, ScheduleGrid],
+  imports: [CommonModule, Timer, ScheduleGrid],
   templateUrl: './schedule-view.html',
   styleUrl: './schedule-view.scss'
 })
@@ -51,5 +53,9 @@ export class ScheduleView implements OnInit {
         this.dailyQuote.set(this.scheduleService.getDailyQuote());
       }
     });
+  }
+
+  setTheme(theme: Theme) {
+    this.themeService.setTheme(theme);
   }
 }

@@ -9,6 +9,7 @@ export class ThemeService {
   private readonly THEME_STORAGE_KEY = 'selected-theme';
   private readonly GROUP_STORAGE_KEY = 'selected-group';
 
+  readonly availableThemes: Theme[] = Object.keys(CATPPUCCIN_THEMES) as Theme[];
   currentTheme = signal<Theme>(this.loadTheme());
   selectedGroup = signal<Group>(this.loadGroup());
 
@@ -32,7 +33,10 @@ export class ThemeService {
 
   private loadTheme(): Theme {
     const saved = localStorage.getItem(this.THEME_STORAGE_KEY);
-    return (saved as Theme) || 'mocha';
+    if (saved && this.availableThemes.includes(saved as Theme)) {
+      return saved as Theme;
+    }
+    return 'mocha';
   }
 
   private loadGroup(): Group {
@@ -58,11 +62,10 @@ export class ThemeService {
   }
 
   cycleTheme(): void {
-    const themes: Theme[] = ['latte', 'frappe', 'macchiato', 'mocha'];
     const current = this.currentTheme();
-    const currentIndex = themes.indexOf(current);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    this.setTheme(themes[nextIndex]);
+    const currentIndex = this.availableThemes.indexOf(current);
+    const nextIndex = (currentIndex + 1) % this.availableThemes.length;
+    this.setTheme(this.availableThemes[nextIndex]);
   }
 
   toggleGroup(): void {

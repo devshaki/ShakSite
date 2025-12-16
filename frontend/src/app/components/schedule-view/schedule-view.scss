@@ -51,28 +51,41 @@
       }
     }
 
-    .theme-toggle {
+    .theme-selector {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
       background: var(--ctp-surface1);
       border: 2px solid var(--ctp-surface2);
       border-radius: 8px;
-      width: 42px;
-      height: 42px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
+      padding: 0.35rem 0.75rem;
       color: var(--ctp-text);
+      font-weight: 600;
 
-      &:hover {
-        border-color: var(--ctp-yellow);
-        background: var(--ctp-surface2);
-        transform: scale(1.05) rotate(15deg);
+      .theme-label {
+        font-size: 0.9rem;
       }
 
-      svg {
-        width: 20px;
-        height: 20px;
+      .theme-select {
+        background: var(--ctp-surface1);
+        border: none;
+        color: var(--ctp-text);
+        font-weight: 600;
+        padding: 0.25rem 0.35rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: border-color 0.2s ease, color 0.2s ease;
+        outline: none;
+
+        &:hover,
+        &:focus {
+          color: var(--ctp-blue);
+        }
+
+        option {
+          background: var(--ctp-surface0);
+          color: var(--ctp-text);
+        }
       }
     }
   }
