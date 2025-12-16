@@ -87,7 +87,7 @@
           background-color 0.2s ease;
         outline: none;
         box-shadow: var(--theme-select-shadow);
-        /* Dual linear gradients create a downward chevron for the dropdown indicator */
+        /* Two opposing gradients overlap to draw a chevron (▼) without extra markup */
         background-image: linear-gradient(45deg, transparent 50%, var(--ctp-subtext0) 50%),
           linear-gradient(135deg, var(--ctp-subtext0) 50%, transparent 50%);
         background-position: calc(100% - var(--arrow-offset-main)) var(--arrow-vertical-position),
@@ -114,6 +114,7 @@
 }
 
 @supports (color: color-mix(in srgb, var(--ctp-overlay0) 30%, transparent)) {
+  /* Progressive enhancement: upgrade shadows to theme colors when color-mix is available */
   .theme-selector .theme-select {
     --theme-select-shadow: 0 8px 18px color-mix(in srgb, var(--ctp-overlay0) 30%, transparent);
     --theme-select-focus-shadow:
