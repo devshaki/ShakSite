@@ -18,6 +18,7 @@ describe('ThemeService', () => {
   it('should expose additional themes for selection', () => {
     expect(service.availableThemes).toContain('dawn');
     expect(service.availableThemes).toContain('midnight');
+    expect(service.availableThemes).toContain('hellokitty');
   });
 
   it('should set the selected theme', () => {

@@ -9,7 +9,7 @@ export class ThemeService {
   private readonly THEME_STORAGE_KEY = 'selected-theme';
   private readonly GROUP_STORAGE_KEY = 'selected-group';
 
-  readonly availableThemes: Theme[] = ['latte', 'frappe', 'macchiato', 'mocha', 'dawn', 'midnight'];
+  readonly availableThemes: Theme[] = ['latte', 'frappe', 'macchiato', 'mocha', 'dawn', 'midnight', 'hellokitty'];
   currentTheme = signal<Theme>(this.loadTheme());
   selectedGroup = signal<Group>(this.loadGroup());
 

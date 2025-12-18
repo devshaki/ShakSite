@@ -1,4 +1,4 @@
-export type Theme = 'latte' | 'frappe' | 'macchiato' | 'mocha' | 'dawn' | 'midnight';
+export type Theme = 'latte' | 'frappe' | 'macchiato' | 'mocha' | 'dawn' | 'midnight' | 'hellokitty';
 
 export interface ThemeColors {
   base: string;
@@ -197,5 +197,33 @@ export const CATPPUCCIN_THEMES: Record<Theme, ThemeColors> = {
     pink: '#f9a8d4',
     flamingo: '#fda4af',
     rosewater: '#fecdd3',
+  },
+  hellokitty: {
+    base: '#fff0f8',
+    mantle: '#ffe4f2',
+    crust: '#ffd6ec',
+    text: '#3d0f2b',
+    subtext0: '#6b1f4a',
+    subtext1: '#55163d',
+    surface0: '#ffd0e7',
+    surface1: '#ffb8da',
+    surface2: '#ffa1ce',
+    overlay0: '#ff8bc1',
+    overlay1: '#ff72b3',
+    overlay2: '#ff5ba5',
+    blue: '#5b8dff',
+    lavender: '#b28fff',
+    sapphire: '#4fb8ff',
+    sky: '#7fdcff',
+    teal: '#4fd6c7',
+    green: '#70c85a',
+    yellow: '#ffc857',
+    peach: '#ff9b73',
+    maroon: '#d12b6a',
+    red: '#ff3b6b',
+    mauve: '#d56cff',
+    pink: '#ff6ec7',
+    flamingo: '#ff9db9',
+    rosewater: '#ffd1e6',
   },
 };
