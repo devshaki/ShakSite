@@ -20,7 +20,7 @@ export class NotificationService {
 
     this.notifications.update(notifications => [...notifications, notification]);
 
-    if (notification.duration > 0) {
+    if (notification.duration && notification.duration > 0) {
       setTimeout(() => this.dismiss(notification.id), notification.duration);
     }
   }
