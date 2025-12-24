@@ -25,7 +25,7 @@
           (change)="setTheme($any($event.target).value)"
           title="בחר ערכת צבעים"
         >
-          <option *ngFor="let theme of themeService.availableThemes" [value]="theme">
+          <option *ngFor="let theme of themeService.availableThemes" [value]="theme" [selected]="theme === themeService.currentTheme()">
             {{ theme | titlecase }}
           </option>
         </select>
