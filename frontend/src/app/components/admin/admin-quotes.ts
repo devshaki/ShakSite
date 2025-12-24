@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Quote } from '../../models/content.models';
 import { QuotesService } from '../../services/quotes.service';
 import { NotificationService } from '../../services/notification.service';
+import { ValidationService } from '../../services/validation.service';
 
 @Component({
   selector: 'app-admin-quotes',
@@ -22,7 +23,8 @@ export class AdminQuotes {
   constructor(
     private quotesService: QuotesService,
     public router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private validationService: ValidationService
   ) {
     this.loadQuotes();
   }
@@ -39,14 +41,17 @@ export class AdminQuotes {
 
   addQuote() {
     const text = this.newQuoteText().trim();
-    if (!text) {
-      this.notificationService.warning('נא למלא את טקסט הציטוט');
+    const author = this.newQuoteAuthor().trim();
+
+    const validation = this.validationService.validateQuoteForm(text, author);
+    if (!validation.valid) {
+      this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
     const newQuote = {
       text,
-      author: this.newQuoteAuthor().trim() || undefined,
+      author: author || undefined,
       addedDate: new Date().toISOString(),
     };
 

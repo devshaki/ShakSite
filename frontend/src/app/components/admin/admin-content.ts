@@ -5,6 +5,7 @@ import { ExamDate, Task } from '../../models/content.models';
 import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
 import { NotificationService } from '../../services/notification.service';
+import { ValidationService } from '../../services/validation.service';
 import { FilterPipe } from '../../pipes/filter.pipe';
 
 @Component({
@@ -42,7 +43,8 @@ export class AdminContent {
   constructor(
     private examsService: ExamsService,
     private tasksService: TasksService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private validationService: ValidationService
   ) {
     this.loadData();
   }
@@ -69,17 +71,20 @@ export class AdminContent {
   addExam() {
     const subject = this.newExamSubject().trim();
     const date = this.newExamDate().trim();
+    const time = this.newExamTime().trim();
+    const room = this.newExamRoom().trim();
 
-    if (!subject || !date) {
-      this.notificationService.warning('נא למלא את כל השדות הנדרשים');
+    const validation = this.validationService.validateExamForm(subject, date, time, room);
+    if (!validation.valid) {
+      this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
     const newExam = {
       subject,
       date,
-      time: this.newExamTime().trim() || undefined,
-      room: this.newExamRoom().trim() || undefined,
+      time: time || undefined,
+      room: room || undefined,
       notes: this.newExamNotes().trim() || undefined,
     };
 
@@ -156,16 +161,18 @@ export class AdminContent {
   addTask() {
     const title = this.newTaskTitle().trim();
     const dueDate = this.newTaskDueDate().trim();
+    const description = this.newTaskDescription().trim();
 
-    if (!title || !dueDate) {
-      this.notificationService.warning('נא למלא את כל השדות הנדרשים');
+    const validation = this.validationService.validateTaskForm(title, dueDate, description);
+    if (!validation.valid) {
+      this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
     const newTask = {
       title,
       dueDate,
-      description: this.newTaskDescription().trim() || undefined,
+      description: description || undefined,
       subject: this.newTaskSubject().trim() || undefined,
       priority: this.newTaskPriority(),
       completed: false,

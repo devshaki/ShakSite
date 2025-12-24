@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Meme } from '../../models/meme.models';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from '../../services/notification.service';
+import { ValidationService } from '../../services/validation.service';
 
 @Component({
   selector: 'app-admin-memes',
@@ -28,7 +29,8 @@ export class AdminMemes {
   constructor(
     private http: HttpClient,
     public router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private validationService: ValidationService
   ) {
     this.loadMemes();
   }
@@ -61,6 +63,16 @@ export class AdminMemes {
     const file = this.selectedFile();
     if (!file) {
       this.notificationService.warning('נא לבחור קובץ להעלאה');
+      return;
+    }
+
+    const validation = this.validationService.validateMemeUpload(
+      file,
+      this.caption,
+      this.uploadedBy
+    );
+    if (!validation.valid) {
+      this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
