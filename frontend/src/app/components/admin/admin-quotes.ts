@@ -17,6 +17,7 @@ export class AdminQuotes {
   quotes = signal<Quote[]>([]);
   newQuoteText = signal('');
   newQuoteAuthor = signal('');
+  searchTerm = signal('');
 
   constructor(
     private quotesService: QuotesService,
@@ -74,5 +75,15 @@ export class AdminQuotes {
         this.notificationService.error('מחיקת ציטוט נכשלה');
       },
     });
+  }
+
+  getFilteredQuotes(): Quote[] {
+    const term = this.searchTerm().toLowerCase();
+    if (!term) return this.quotes();
+
+    return this.quotes().filter(quote =>
+      quote.text.toLowerCase().includes(term) ||
+      quote.author?.toLowerCase().includes(term)
+    );
   }
 }

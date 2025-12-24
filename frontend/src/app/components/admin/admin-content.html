@@ -70,12 +70,20 @@
       </div>
 
       <div class="items-list">
-        <h4>מבחנים קרובים ({{ exams().length }})</h4>
-        @if (exams().length === 0) {
-          <p class="empty-state">אין מבחנים מתוכננים</p>
+        <div class="list-header">
+          <h4>מבחנים קרובים ({{ getFilteredExams().length }} מתוך {{ exams().length }})</h4>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="חיפוש מבחנים..."
+            [(ngModel)]="examSearchTerm"
+          />
+        </div>
+        @if (getFilteredExams().length === 0) {
+          <p class="empty-state">{{ exams().length === 0 ? 'אין מבחנים מתוכננים' : 'לא נמצאו תוצאות' }}</p>
         }
-        
-        @for (exam of getSortedExams(); track exam.id) {
+
+        @for (exam of getFilteredExams(); track exam.id) {
           <div class="item exam-item">
             <div class="item-content">
               <h5>{{ exam.subject }}</h5>
@@ -169,12 +177,27 @@
       </div>
 
       <div class="items-list">
-        <h4>מטלות ({{ tasks().length }})</h4>
-        @if (tasks().length === 0) {
-          <p class="empty-state">אין מטלות</p>
+        <div class="list-header">
+          <h4>מטלות ({{ getFilteredTasks().length }} מתוך {{ tasks().length }})</h4>
+          <div class="filter-controls">
+            <input
+              type="text"
+              class="search-input"
+              placeholder="חיפוש מטלות..."
+              [(ngModel)]="taskSearchTerm"
+            />
+            <select class="filter-select" [(ngModel)]="taskFilterStatus">
+              <option value="all">הכל</option>
+              <option value="incomplete">לא הושלמו</option>
+              <option value="completed">הושלמו</option>
+            </select>
+          </div>
+        </div>
+        @if (getFilteredTasks().length === 0) {
+          <p class="empty-state">{{ tasks().length === 0 ? 'אין מטלות' : 'לא נמצאו תוצאות' }}</p>
         }
-        
-        @for (task of getSortedTasks(); track task.id) {
+
+        @for (task of getFilteredTasks(); track task.id) {
           <div class="item task-item" [class.completed]="task.completed" [attr.data-priority]="task.priority">
             <div class="item-content">
               <div class="task-header">

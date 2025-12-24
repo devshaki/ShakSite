@@ -21,6 +21,7 @@ export class AdminMemes {
   uploadedBy = '';
   uploading = signal(false);
   previewUrl = signal<string | null>(null);
+  searchTerm = signal('');
 
   private readonly apiUrl = `${environment.apiUrl}/memes`;
 
@@ -107,10 +108,20 @@ export class AdminMemes {
   }
 
   getMemeUrl(filename: string): string {
-    // Serve images through API endpoint instead of static serving
     const url = `${this.apiUrl}/image/${filename}`;
     console.log('Loading meme image:', url);
     return url;
+  }
+
+  getFilteredMemes(): Meme[] {
+    const term = this.searchTerm().toLowerCase();
+    if (!term) return this.memes();
+
+    return this.memes().filter(meme =>
+      meme.caption?.toLowerCase().includes(term) ||
+      meme.uploadedBy?.toLowerCase().includes(term) ||
+      meme.originalName?.toLowerCase().includes(term)
+    );
   }
 
   onImageError(event: Event, meme: any) {

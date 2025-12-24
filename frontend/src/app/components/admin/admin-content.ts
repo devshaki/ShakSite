@@ -5,17 +5,22 @@ import { ExamDate, Task } from '../../models/content.models';
 import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
 import { NotificationService } from '../../services/notification.service';
+import { FilterPipe } from '../../pipes/filter.pipe';
 
 @Component({
   selector: 'app-admin-content',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FilterPipe],
   templateUrl: './admin-content.html',
   styleUrl: './admin-content.scss',
 })
 export class AdminContent {
   exams = signal<ExamDate[]>([]);
   tasks = signal<Task[]>([]);
+
+  examSearchTerm = signal('');
+  taskSearchTerm = signal('');
+  taskFilterStatus = signal<'all' | 'incomplete' | 'completed'>('all');
 
   // Exam form
   newExamSubject = signal('');
@@ -252,6 +257,50 @@ export class AdminContent {
     this.newTaskPriority.set('medium');
   }
 
+  getFilteredExams(): ExamDate[] {
+    let filtered = [...this.exams()];
+
+    const searchTerm = this.examSearchTerm().toLowerCase();
+    if (searchTerm) {
+      filtered = filtered.filter(exam =>
+        exam.subject.toLowerCase().includes(searchTerm) ||
+        exam.room?.toLowerCase().includes(searchTerm) ||
+        exam.notes?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    return filtered.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }
+
+  getFilteredTasks(): Task[] {
+    let filtered = [...this.tasks()];
+
+    const status = this.taskFilterStatus();
+    if (status === 'incomplete') {
+      filtered = filtered.filter(t => !t.completed);
+    } else if (status === 'completed') {
+      filtered = filtered.filter(t => t.completed);
+    }
+
+    const searchTerm = this.taskSearchTerm().toLowerCase();
+    if (searchTerm) {
+      filtered = filtered.filter(task =>
+        task.title.toLowerCase().includes(searchTerm) ||
+        task.description?.toLowerCase().includes(searchTerm) ||
+        task.subject?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    return filtered.sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
+      }
+      return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+    });
+  }
+
   getSortedExams(): ExamDate[] {
     return [...this.exams()].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -260,11 +309,9 @@ export class AdminContent {
 
   getSortedTasks(): Task[] {
     return [...this.tasks()].sort((a, b) => {
-      // Incomplete tasks first
       if (a.completed !== b.completed) {
         return a.completed ? 1 : -1;
       }
-      // Then by due date
       return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
     });
   }
