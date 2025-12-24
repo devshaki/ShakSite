@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ExamDate, Task } from '../../models/content.models';
 import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-admin-content',
@@ -33,19 +34,29 @@ export class AdminContent {
   editingExamId = signal<string | null>(null);
   editingTaskId = signal<string | null>(null);
 
-  constructor(private examsService: ExamsService, private tasksService: TasksService) {
+  constructor(
+    private examsService: ExamsService,
+    private tasksService: TasksService,
+    private notificationService: NotificationService
+  ) {
     this.loadData();
   }
 
   loadData() {
     this.examsService.getAll().subscribe({
       next: (exams) => this.exams.set(exams),
-      error: (err) => console.error('Failed to load exams:', err),
+      error: (err) => {
+        console.error('Failed to load exams:', err);
+        this.notificationService.error('טעינת מבחנים נכשלה');
+      },
     });
 
     this.tasksService.getAll().subscribe({
       next: (tasks) => this.tasks.set(tasks),
-      error: (err) => console.error('Failed to load tasks:', err),
+      error: (err) => {
+        console.error('Failed to load tasks:', err);
+        this.notificationService.error('טעינת משימות נכשלה');
+      },
     });
   }
 
@@ -54,7 +65,10 @@ export class AdminContent {
     const subject = this.newExamSubject().trim();
     const date = this.newExamDate().trim();
 
-    if (!subject || !date) return;
+    if (!subject || !date) {
+      this.notificationService.warning('נא למלא את כל השדות הנדרשים');
+      return;
+    }
 
     const newExam = {
       subject,
@@ -68,8 +82,12 @@ export class AdminContent {
       next: (exam) => {
         this.exams.update((exams) => [...exams, exam]);
         this.clearExamForm();
+        this.notificationService.success('מבחן נוסף בהצלחה');
       },
-      error: (err) => console.error('Failed to add exam:', err),
+      error: (err) => {
+        console.error('Failed to add exam:', err);
+        this.notificationService.error('הוספת מבחן נכשלה');
+      },
     });
   }
 
@@ -98,8 +116,12 @@ export class AdminContent {
       next: (exam) => {
         this.exams.update((exams) => exams.map((e) => (e.id === examId ? exam : e)));
         this.clearExamForm();
+        this.notificationService.success('מבחן עודכן בהצלחה');
       },
-      error: (err) => console.error('Failed to update exam:', err),
+      error: (err) => {
+        console.error('Failed to update exam:', err);
+        this.notificationService.error('עדכון מבחן נכשל');
+      },
     });
   }
 
@@ -107,8 +129,12 @@ export class AdminContent {
     this.examsService.delete(id).subscribe({
       next: () => {
         this.exams.update((exams) => exams.filter((e) => e.id !== id));
+        this.notificationService.success('מבחן נמחק בהצלחה');
       },
-      error: (err) => console.error('Failed to delete exam:', err),
+      error: (err) => {
+        console.error('Failed to delete exam:', err);
+        this.notificationService.error('מחיקת מבחן נכשלה');
+      },
     });
   }
 
@@ -126,7 +152,10 @@ export class AdminContent {
     const title = this.newTaskTitle().trim();
     const dueDate = this.newTaskDueDate().trim();
 
-    if (!title || !dueDate) return;
+    if (!title || !dueDate) {
+      this.notificationService.warning('נא למלא את כל השדות הנדרשים');
+      return;
+    }
 
     const newTask = {
       title,
@@ -141,8 +170,12 @@ export class AdminContent {
       next: (task) => {
         this.tasks.update((tasks) => [...tasks, task]);
         this.clearTaskForm();
+        this.notificationService.success('משימה נוספה בהצלחה');
       },
-      error: (err) => console.error('Failed to add task:', err),
+      error: (err) => {
+        console.error('Failed to add task:', err);
+        this.notificationService.error('הוספת משימה נכשלה');
+      },
     });
   }
 
@@ -171,8 +204,12 @@ export class AdminContent {
       next: (task) => {
         this.tasks.update((tasks) => tasks.map((t) => (t.id === taskId ? task : t)));
         this.clearTaskForm();
+        this.notificationService.success('משימה עודכנה בהצלחה');
       },
-      error: (err) => console.error('Failed to update task:', err),
+      error: (err) => {
+        console.error('Failed to update task:', err);
+        this.notificationService.error('עדכון משימה נכשל');
+      },
     });
   }
 
@@ -183,8 +220,13 @@ export class AdminContent {
     this.tasksService.update(id, { completed: !task.completed }).subscribe({
       next: (updatedTask) => {
         this.tasks.update((tasks) => tasks.map((t) => (t.id === id ? updatedTask : t)));
+        const status = updatedTask.completed ? 'הושלמה' : 'סומנה כלא הושלמה';
+        this.notificationService.success(`משימה ${status}`);
       },
-      error: (err) => console.error('Failed to toggle task:', err),
+      error: (err) => {
+        console.error('Failed to toggle task:', err);
+        this.notificationService.error('שינוי סטטוס משימה נכשל');
+      },
     });
   }
 
@@ -192,8 +234,12 @@ export class AdminContent {
     this.tasksService.delete(id).subscribe({
       next: () => {
         this.tasks.update((tasks) => tasks.filter((t) => t.id !== id));
+        this.notificationService.success('משימה נמחקה בהצלחה');
       },
-      error: (err) => console.error('Failed to delete task:', err),
+      error: (err) => {
+        console.error('Failed to delete task:', err);
+        this.notificationService.error('מחיקת משימה נכשלה');
+      },
     });
   }
 

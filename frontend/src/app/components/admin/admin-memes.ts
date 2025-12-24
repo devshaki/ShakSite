@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Meme } from '../../models/meme.models';
 import { environment } from '../../../environments/environment';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-admin-memes',
@@ -23,14 +24,21 @@ export class AdminMemes {
 
   private readonly apiUrl = `${environment.apiUrl}/memes`;
 
-  constructor(private http: HttpClient, public router: Router) {
+  constructor(
+    private http: HttpClient,
+    public router: Router,
+    private notificationService: NotificationService
+  ) {
     this.loadMemes();
   }
 
   loadMemes() {
     this.http.get<Meme[]>(this.apiUrl).subscribe({
       next: (memes) => this.memes.set(memes),
-      error: (err) => console.error('Failed to load memes:', err),
+      error: (err) => {
+        console.error('Failed to load memes:', err);
+        this.notificationService.error('טעינת ממים נכשלה');
+      },
     });
   }
 
@@ -40,7 +48,6 @@ export class AdminMemes {
       const file = input.files[0];
       this.selectedFile.set(file);
 
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         this.previewUrl.set(e.target?.result as string);
@@ -51,7 +58,10 @@ export class AdminMemes {
 
   uploadMeme() {
     const file = this.selectedFile();
-    if (!file) return;
+    if (!file) {
+      this.notificationService.warning('נא לבחור קובץ להעלאה');
+      return;
+    }
 
     this.uploading.set(true);
     const formData = new FormData();
@@ -64,10 +74,11 @@ export class AdminMemes {
         this.memes.update((memes) => [meme, ...memes]);
         this.clearForm();
         this.uploading.set(false);
+        this.notificationService.success('מם הועלה בהצלחה');
       },
       error: (err) => {
         console.error('Upload failed:', err);
-        alert('העלאה נכשלה. נסה שוב.');
+        this.notificationService.error('העלאת מם נכשלה');
         this.uploading.set(false);
       },
     });
@@ -79,8 +90,12 @@ export class AdminMemes {
     this.http.delete<{ success: boolean }>(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
         this.memes.update((memes) => memes.filter((m) => m.id !== id));
+        this.notificationService.success('מם נמחק בהצלחה');
       },
-      error: (err) => console.error('Delete failed:', err),
+      error: (err) => {
+        console.error('Delete failed:', err);
+        this.notificationService.error('מחיקת מם נכשלה');
+      },
     });
   }
 
