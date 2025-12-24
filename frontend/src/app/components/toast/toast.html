@@ -1,0 +1,26 @@
+<div class="toast-container">
+  <div
+    *ngFor="let notification of notificationService.notifications()"
+    class="toast toast-{{ notification.type }}"
+    [class.toast-entering]="true"
+  >
+    <div class="toast-content">
+      <span class="toast-icon">
+        @switch (notification.type) {
+          @case ('success') { ✓ }
+          @case ('error') { ✕ }
+          @case ('warning') { ⚠ }
+          @case ('info') { ℹ }
+        }
+      </span>
+      <span class="toast-message">{{ notification.message }}</span>
+    </div>
+    <button
+      class="toast-close"
+      (click)="dismiss(notification.id)"
+      aria-label="Close notification"
+    >
+      ×
+    </button>
+  </div>
+</div>
