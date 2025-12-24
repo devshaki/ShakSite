@@ -7,6 +7,7 @@ import { Meme } from '../../models/meme.models';
 import { environment } from '../../../environments/environment';
 import { NotificationService } from '../../services/notification.service';
 import { ValidationService } from '../../services/validation.service';
+import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-admin-memes',
@@ -23,6 +24,7 @@ export class AdminMemes {
   uploading = signal(false);
   previewUrl = signal<string | null>(null);
   searchTerm = signal('');
+  showOnlyFavorites = signal(false);
 
   private readonly apiUrl = `${environment.apiUrl}/memes`;
 
@@ -30,7 +32,8 @@ export class AdminMemes {
     private http: HttpClient,
     public router: Router,
     private notificationService: NotificationService,
-    private validationService: ValidationService
+    private validationService: ValidationService,
+    public favoritesService: FavoritesService
   ) {
     this.loadMemes();
   }
@@ -125,15 +128,32 @@ export class AdminMemes {
     return url;
   }
 
-  getFilteredMemes(): Meme[] {
-    const term = this.searchTerm().toLowerCase();
-    if (!term) return this.memes();
+  toggleFavorite(memeId: string): void {
+    const isFavorited = this.favoritesService.toggleFavorite(memeId);
+    const message = isFavorited ? 'נוסף למועדפים' : 'הוסר מהמועדפים';
+    this.notificationService.success(message);
+  }
 
-    return this.memes().filter(meme =>
-      meme.caption?.toLowerCase().includes(term) ||
-      meme.uploadedBy?.toLowerCase().includes(term) ||
-      meme.originalName?.toLowerCase().includes(term)
-    );
+  getFilteredMemes(): Meme[] {
+    let filtered = this.memes().map(meme => ({
+      ...meme,
+      favorited: this.favoritesService.isFavorite(meme.id)
+    }));
+
+    if (this.showOnlyFavorites()) {
+      filtered = filtered.filter(meme => meme.favorited);
+    }
+
+    const term = this.searchTerm().toLowerCase();
+    if (term) {
+      filtered = filtered.filter(meme =>
+        meme.caption?.toLowerCase().includes(term) ||
+        meme.uploadedBy?.toLowerCase().includes(term) ||
+        meme.originalName?.toLowerCase().includes(term)
+      );
+    }
+
+    return filtered;
   }
 
   onImageError(event: Event, meme: any) {

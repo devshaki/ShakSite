@@ -5,4 +5,5 @@ export interface Meme {
   uploadedBy?: string;
   uploadedAt: string;
   caption?: string;
+  favorited?: boolean;
 }
