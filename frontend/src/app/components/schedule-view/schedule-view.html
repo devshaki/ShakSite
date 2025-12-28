@@ -1,38 +1,4 @@
 <div class="app-container">
-  <nav class="navbar">
-    <div class="nav-brand">
-      <h1>מערכת שעות</h1>
-    </div>
-    <div class="nav-links">
-      <button class="nav-btn" (click)="router.navigate(['/'])" title="דף הבית">
-        🏠 דף הבית
-      </button>
-      <button class="nav-btn" (click)="router.navigate(['/quotes'])" title="ציטוטים">
-        💬 ציטוטים
-      </button>
-      <button class="nav-btn" (click)="router.navigate(['/memes'])" title="גלריית ממים">
-        🖼️ גלרייה
-      </button>
-      <button class="nav-btn" (click)="router.navigate(['/admin'])" title="לוח ניהול">
-        ⚙️ ניהול
-      </button>
-      <label class="theme-selector" for="theme-select">
-        <span class="theme-label">ערכת צבעים</span>
-        <select
-          id="theme-select"
-          class="theme-select"
-          [value]="themeService.currentTheme()"
-          (change)="setTheme($any($event.target).value)"
-          title="בחר ערכת צבעים"
-        >
-          <option *ngFor="let theme of themeService.availableThemes" [value]="theme" [selected]="theme === themeService.currentTheme()">
-            {{ theme | titlecase }}
-          </option>
-        </select>
-      </label>
-    </div>
-  </nav>
-  
   <header class="header">
     <div class="quote">{{ dailyQuote() }}</div>
   </header>

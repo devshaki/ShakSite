@@ -1,66 +1,26 @@
 .page-container {
   min-height: 100vh;
-  background: var(--base);
-
-  .page-header {
-    background: var(--surface0);
-    border-bottom: 2px solid var(--overlay0);
-    padding: 1.5rem 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-
-    .back-btn {
-      background: var(--surface1);
-      border: 2px solid var(--overlay0);
-      color: var(--text);
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: var(--surface2);
-        border-color: var(--blue);
-        color: var(--blue);
-        transform: translateX(4px);
-      }
-    }
-
-    h1 {
-      color: var(--text);
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    .spacer {
-      width: 150px;
-    }
-  }
+  background: var(--ctp-base);
 }
 
 .admin-memes {
-  padding: 0 2rem 2rem 2rem;
+  padding: 2rem 2rem 2rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
 
   h3 {
-    color: var(--text);
+    color: var(--ctp-text);
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
     font-weight: 700;
   }
 
   .upload-section {
-    background: var(--surface0);
+    background: var(--ctp-surface0);
     padding: 2.5rem;
     border-radius: 12px;
     margin-bottom: 3rem;
-    border: 2px solid var(--overlay0);
+    border: 2px solid var(--ctp-surface1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
     .upload-area {
@@ -81,14 +41,14 @@
         align-items: center;
         justify-content: center;
         padding: 3rem;
-        border: 2px dashed var(--overlay1);
+        border: 2px dashed var(--ctp-surface2);
         border-radius: 12px;
-        background: var(--base);
+        background: var(--ctp-mantle);
         transition: all 0.2s;
 
         &:hover {
-          border-color: var(--blue);
-          background: var(--surface1);
+          border-color: var(--ctp-blue);
+          background: var(--ctp-surface0);
         }
 
         .upload-icon {
@@ -98,14 +58,14 @@
 
         .upload-text {
           font-size: 1.1rem;
-          color: var(--text);
+          color: var(--ctp-text);
           font-weight: 600;
           margin-bottom: 0.5rem;
         }
 
         .upload-subtext {
           font-size: 0.9rem;
-          color: var(--subtext0);
+          color: var(--ctp-subtext0);
         }
       }
 
@@ -126,8 +86,8 @@
           position: absolute;
           top: 1rem;
           left: 1rem;
-          background: var(--red);
-          color: var(--base);
+          background: var(--ctp-red);
+          color: var(--ctp-crust);
           border: none;
           width: 32px;
           height: 32px;
@@ -152,7 +112,7 @@
 
         label {
           display: block;
-          color: var(--text);
+          color: var(--ctp-text);
           margin-bottom: 0.75rem;
           font-weight: 600;
           font-size: 1.05rem;
@@ -161,22 +121,22 @@
         input {
           width: 100%;
           padding: 1rem;
-          border: 2px solid var(--overlay0);
+          border: 2px solid var(--ctp-surface1);
           border-radius: 8px;
-          background: var(--base);
-          color: var(--text);
+          background: var(--ctp-base);
+          color: var(--ctp-text);
           font-family: inherit;
           font-size: 1rem;
           transition: all 0.2s;
 
           &:focus {
             outline: none;
-            border-color: var(--blue);
+            border-color: var(--ctp-blue);
             box-shadow: 0 0 0 3px rgba(137, 180, 250, 0.1);
           }
 
           &::placeholder {
-            color: var(--overlay2);
+            color: var(--ctp-overlay1);
           }
         }
       }
@@ -206,8 +166,8 @@
         }
 
         .btn-upload {
-          background: var(--green);
-          color: var(--crust);
+          background: var(--ctp-green);
+          color: var(--ctp-crust);
           box-shadow: 0 2px 8px rgba(166, 227, 161, 0.3);
 
           &:hover:not(:disabled) {
@@ -216,13 +176,13 @@
         }
 
         .btn-cancel {
-          background: var(--surface2);
-          color: var(--text);
-          border: 2px solid var(--overlay0);
+          background: var(--ctp-surface1);
+          color: var(--ctp-text);
+          border: 2px solid var(--ctp-surface1);
 
           &:hover {
-            background: var(--overlay0);
-            border-color: var(--overlay1);
+            background: var(--ctp-surface2);
+            border-color: var(--ctp-surface2);
           }
         }
       }
@@ -232,9 +192,9 @@
   .memes-grid {
     .empty-state {
       text-align: center;
-      color: var(--subtext0);
+      color: var(--ctp-subtext0);
       padding: 3rem;
-      background: var(--surface0);
+      background: var(--ctp-surface0);
       border-radius: 12px;
       font-style: italic;
       font-size: 1.1rem;
@@ -249,15 +209,15 @@
         position: relative;
         border-radius: 12px;
         overflow: hidden;
-        background: var(--surface0);
-        border: 2px solid var(--overlay0);
+        background: var(--ctp-surface0);
+        border: 2px solid var(--ctp-surface1);
         transition: all 0.3s;
         cursor: pointer;
 
         &:hover {
           transform: translateY(-6px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-          border-color: var(--blue);
+          border-color: var(--ctp-blue);
 
           .meme-overlay {
             opacity: 1;
@@ -269,14 +229,14 @@
           height: 350px;
           object-fit: cover;
           display: block;
-          background: var(--surface1);
+          background: var(--ctp-mantle);
         }
 
         .image-error {
           padding: 2rem;
           text-align: center;
-          color: var(--red);
-          background: var(--surface1);
+          color: var(--ctp-red);
+          background: var(--ctp-mantle);
           height: 350px;
           display: flex;
           align-items: center;
@@ -318,7 +278,7 @@
           }
 
           .btn-delete-meme {
-            background: var(--red);
+            background: var(--ctp-red);
             color: #ffffff;
             border: none;
             padding: 0.6rem 1rem;
@@ -389,9 +349,9 @@
       position: absolute;
       top: -50px;
       right: 0;
-      background: var(--surface0);
-      border: 2px solid var(--overlay0);
-      color: var(--text);
+      background: var(--ctp-surface0);
+      border: 2px solid var(--ctp-surface1);
+      color: var(--ctp-text);
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -405,8 +365,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 
       &:hover {
-        background: var(--red);
-        border-color: var(--red);
+        background: var(--ctp-red);
+        border-color: var(--ctp-red);
         color: #ffffff;
         transform: rotate(90deg);
         box-shadow: 0 6px 16px rgba(243, 139, 168, 0.6);
@@ -421,21 +381,21 @@
       object-fit: contain;
       border-radius: 12px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-      background: var(--surface0);
+      background: var(--ctp-mantle);
     }
 
     .modal-info {
       margin-top: 1.5rem;
-      background: var(--surface0);
+      background: var(--ctp-surface0);
       padding: 1.5rem 2rem;
       border-radius: 12px;
-      border: 2px solid var(--overlay0);
+      border: 2px solid var(--ctp-surface1);
       min-width: 400px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 
       .modal-caption {
         font-size: 1.2rem;
-        color: var(--text);
+        color: var(--ctp-text);
         margin: 0 0 1rem 0;
         font-weight: 600;
         text-align: center;
@@ -448,17 +408,17 @@
         align-items: center;
         flex-wrap: wrap;
         font-size: 0.95rem;
-        color: var(--subtext1);
+        color: var(--ctp-subtext1);
 
         .modal-uploaded-by,
         .modal-uploaded-date {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          background: var(--surface1);
+          background: var(--ctp-mantle);
           padding: 0.5rem 1rem;
           border-radius: 8px;
-          border: 1px solid var(--overlay0);
+          border: 1px solid var(--ctp-surface1);
         }
       }
     }

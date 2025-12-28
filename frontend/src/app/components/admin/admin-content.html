@@ -4,130 +4,58 @@
   <div class="content-grid">
     <!-- Exams Section -->
     <div class="section exams-section">
-      <h3>מבחנים</h3>
-      
-      <div class="form-container">
-        <div class="form-header">
-          <span class="form-icon">📝</span>
-          <h4>{{ editingExamId() ? '✏️ עריכת מבחן' : '➕ הוספת מבחן חדש' }}</h4>
-        </div>
-        
-        <div class="form-section">
-          <div class="section-label">
-            <span class="section-icon">📚</span>
-            <span>פרטי המבחן</span>
-          </div>
-          
-          <div class="form-group">
-            <label for="examSubject">📖 מקצוע:</label>
-            <input 
-              id="examSubject"
-              type="text"
-              [(ngModel)]="newExamSubject"
-              placeholder="לדוגמה: מתמטיקה, אנגלית..."
-            />
-          </div>
-        </div>
-
-        <div class="form-section">
-          <div class="section-label">
-            <span class="section-icon">🕐</span>
-            <span>מועד ומיקום</span>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="examDate">📅 תאריך:</label>
-              <input 
-                id="examDate"
-                type="date"
-                [(ngModel)]="newExamDate"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="examTime">⏰ שעה (אופציונלי):</label>
-              <input 
-                id="examTime"
-                type="time"
-                [(ngModel)]="newExamTime"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="examRoom">📍 חדר (אופציונלי):</label>
-            <input 
-              id="examRoom"
-              type="text"
-              [(ngModel)]="newExamRoom"
-              placeholder="מיקום המבחן"
-            />
-          </div>
-        </div>
-
-        <div class="form-section">
-          <div class="section-label">
-            <span class="section-icon">💭</span>
-            <span>הערות נוספות</span>
-          </div>
-          
-          <div class="form-group">
-            <label for="examNotes">📝 הערות (אופציונלי):</label>
-            <textarea 
-              id="examNotes"
-              [(ngModel)]="newExamNotes"
-              placeholder="פרטים נוספים על המבחן..."
-              rows="3"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          @if (editingExamId()) {
-            <button class="btn-primary" (click)="updateExam()">עדכן מבחן</button>
-            <button class="btn-secondary" (click)="clearExamForm()">ביטול</button>
-          } @else {
-            <button class="btn-primary" (click)="addExam()">הוסף מבחן</button>
-          }
-        </div>
+      <div class="section-title">
+        <span class="section-icon"></span>
+        <h3>מבחנים</h3>
       </div>
+      
+      <!-- Exam Form using Form Builder -->
+      <app-form-builder
+        [config]="examFormConfig()"
+        (formSubmit)="handleExamSubmit($event)"
+      />
 
-      <div class="items-list">
-        <div class="list-header">
-          <h4>מבחנים קרובים ({{ getFilteredExams().length }} מתוך {{ exams().length }})</h4>
-          <input
-            type="text"
-            class="search-input"
-            placeholder="חיפוש מבחנים..."
-            [(ngModel)]="examSearchTerm"
-          />
+      <!-- Exams List -->
+      <div class="items-section">
+        <div class="section-header">
+          <h4>📋 רשימת מבחנים</h4>
+          <div class="search-group">
+            <input
+              type="text"
+              [(ngModel)]="examSearchTerm"
+              placeholder="חיפוש מבחנים..."
+              class="search-input"
+            />
+          </div>
         </div>
-        @if (getFilteredExams().length === 0) {
-          <p class="empty-state">{{ exams().length === 0 ? 'אין מבחנים מתוכננים' : 'לא נמצאו תוצאות' }}</p>
-        }
 
-        @for (exam of getFilteredExams(); track exam.id) {
-          <div class="item exam-item">
-            <div class="item-content">
-              <h5>{{ exam.subject }}</h5>
-              <div class="item-details">
-                <span class="detail-date">📅 {{ exam.date | date: 'dd/MM/yyyy' }}</span>
-                @if (exam.time) {
-                  <span class="detail-time">🕐 {{ exam.time }}</span>
-                }
-                @if (exam.room) {
-                  <span class="detail-room">📍 {{ exam.room }}</span>
-                }
+        @if (getFilteredExams().length === 0) {
+          <p class="empty-message">אין מבחנים להצגה</p>
+        } @else {
+          <div class="items-list">
+            @for (exam of getFilteredExams(); track exam.id) {
+              <div class="item">
+                <div class="item-content">
+                  <h5>{{ exam.subject }}</h5>
+                  <div class="item-details">
+                    <span>📅 {{ exam.date }}</span>
+                    @if (exam.time) {
+                      <span>⏰ {{ exam.time }}</span>
+                    }
+                    @if (exam.room) {
+                      <span>📍 {{ exam.room }}</span>
+                    }
+                  </div>
+                  @if (exam.notes) {
+                    <p class="item-notes">{{ exam.notes }}</p>
+                  }
+                </div>
+                <div class="item-actions">
+                  <button class="edit-btn" (click)="editExam(exam)">✏️</button>
+                  <button class="delete-btn" (click)="deleteExam(exam.id)">🗑️</button>
+                </div>
               </div>
-              @if (exam.notes) {
-                <p class="item-notes">{{ exam.notes }}</p>
-              }
-            </div>
-            <div class="item-actions">
-              <button class="btn-edit" (click)="editExam(exam)">ערוך</button>
-              <button class="btn-delete" (click)="deleteExam(exam.id)">מחק</button>
-            </div>
+            }
           </div>
         }
       </div>
@@ -135,138 +63,80 @@
 
     <!-- Tasks Section -->
     <div class="section tasks-section">
-      <h3>מטלות</h3>
-      
-      <div class="form-container">
-        <div class="form-header">
-          <span class="form-icon">✅</span>
-          <h4>{{ editingTaskId() ? '✏️ עריכת מטלה' : '➕ הוספת מטלה חדשה' }}</h4>
-        </div>
-        
-        <div class="form-section">
-          <div class="section-label">
-            <span class="section-icon">📋</span>
-            <span>פרטי המטלה</span>
-          </div>
-          
-          <div class="form-group">
-            <label for="taskTitle">📌 כותרת:</label>
-            <input 
-              id="taskTitle"
-              type="text"
-              [(ngModel)]="newTaskTitle"
-              placeholder="לדוגמה: תרגיל בית, עבודה מסכמת..."
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="taskDescription">📄 תיאור (אופציונלי):</label>
-            <textarea 
-              id="taskDescription"
-              [(ngModel)]="newTaskDescription"
-              placeholder="פרטים על המטלה..."
-              rows="3"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <div class="section-label">
-            <span class="section-icon">🎯</span>
-            <span>פרטים נוספים</span>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="taskDueDate">📅 תאריך הגשה:</label>
-              <input 
-                id="taskDueDate"
-                type="date"
-                [(ngModel)]="newTaskDueDate"
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="taskSubject">📚 מקצוע (אופציונלי):</label>
-              <input 
-                id="taskSubject"
-                type="text"
-                [(ngModel)]="newTaskSubject"
-                placeholder="מקצוע"
-              />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="taskPriority">⚡ עדיפות:</label>
-            <select id="taskPriority" [(ngModel)]="newTaskPriority">
-              <option value="low">🟢 נמוכה - אפשר להמתין</option>
-              <option value="medium">🟡 בינונית - חשוב</option>
-              <option value="high">🔴 גבוהה - דחוף!</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-actions">
-          @if (editingTaskId()) {
-            <button class="btn-primary" (click)="updateTask()">עדכן מטלה</button>
-            <button class="btn-secondary" (click)="clearTaskForm()">ביטול</button>
-          } @else {
-            <button class="btn-primary" (click)="addTask()">הוסף מטלה</button>
-          }
-        </div>
+      <div class="section-title">
+        <span class="section-icon"></span>
+        <h3>מטלות</h3>
       </div>
+      
+      <!-- Task Form using Form Builder -->
+      <app-form-builder
+        [config]="taskFormConfig()"
+        (formSubmit)="handleTaskSubmit($event)"
+      />
 
-      <div class="items-list">
-        <div class="list-header">
-          <h4>מטלות ({{ getFilteredTasks().length }} מתוך {{ tasks().length }})</h4>
-          <div class="filter-controls">
-            <input
-              type="text"
-              class="search-input"
-              placeholder="חיפוש מטלות..."
-              [(ngModel)]="taskSearchTerm"
-            />
-            <select class="filter-select" [(ngModel)]="taskFilterStatus">
-              <option value="all">הכל</option>
-              <option value="incomplete">לא הושלמו</option>
-              <option value="completed">הושלמו</option>
-            </select>
+      <!-- Tasks List -->
+      <div class="items-section">
+        <div class="section-header">
+          <h4>📋 רשימת מטלות</h4>
+          <div class="filters">
+            <div class="search-group">
+              <input
+                type="text"
+                [(ngModel)]="taskSearchTerm"
+                placeholder="חיפוש מטלות..."
+                class="search-input"
+              />
+            </div>
+            <div class="filter-group">
+              <label>סינון:</label>
+              <select [(ngModel)]="taskFilterStatus" class="filter-select">
+                <option value="all">הכל</option>
+                <option value="incomplete">לא הושלמו</option>
+                <option value="completed">הושלמו</option>
+              </select>
+            </div>
           </div>
         </div>
-        @if (getFilteredTasks().length === 0) {
-          <p class="empty-state">{{ tasks().length === 0 ? 'אין מטלות' : 'לא נמצאו תוצאות' }}</p>
-        }
 
-        @for (task of getFilteredTasks(); track task.id) {
-          <div class="item task-item" [class.completed]="task.completed" [attr.data-priority]="task.priority">
-            <div class="item-content">
-              <div class="task-header">
-                <input 
-                  type="checkbox" 
-                  [checked]="task.completed"
-                  (change)="toggleTaskCompletion(task.id)"
-                  class="task-checkbox"
-                />
-                <h5>{{ task.title }}</h5>
-                <span class="priority-badge" [attr.data-priority]="task.priority">
-                  {{ task.priority === 'high' ? 'גבוהה' : task.priority === 'medium' ? 'בינונית' : 'נמוכה' }}
-                </span>
+        @if (getFilteredTasks().length === 0) {
+          <p class="empty-message">אין מטלות להצגה</p>
+        } @else {
+          <div class="items-list">
+            @for (task of getFilteredTasks(); track task.id) {
+              <div class="item" [class.completed]="task.completed">
+                <div class="item-checkbox">
+                  <input
+                    type="checkbox"
+                    [checked]="task.completed"
+                    (change)="toggleTaskCompletion(task.id)"
+                  />
+                </div>
+                <div class="item-content">
+                  <h5>{{ task.title }}</h5>
+                  <div class="item-details">
+                    @if (task.dueDate) {
+                      <span>📅 {{ task.dueDate }}</span>
+                    }
+                    @if (task.subject) {
+                      <span>{{ task.subject }}</span>
+                    }
+                    @if (task.priority) {
+                      <span class="priority-badge" [class]="'priority-' + task.priority">
+                        {{ task.priority === 'high' ? '🔴' : task.priority === 'medium' ? '🟡' : '🟢' }}
+                        {{ task.priority === 'high' ? 'גבוהה' : task.priority === 'medium' ? 'בינונית' : 'נמוכה' }}
+                      </span>
+                    }
+                  </div>
+                  @if (task.description) {
+                    <p class="item-description">{{ task.description }}</p>
+                  }
+                </div>
+                <div class="item-actions">
+                  <button class="edit-btn" (click)="editTask(task)">✏️</button>
+                  <button class="delete-btn" (click)="deleteTask(task.id)">🗑️</button>
+                </div>
               </div>
-              @if (task.description) {
-                <p class="item-description">{{ task.description }}</p>
-              }
-              <div class="item-details">
-                <span class="detail-date">📅 {{ task.dueDate | date: 'dd/MM/yyyy' }}</span>
-                @if (task.subject) {
-                  <span class="detail-subject">📚 {{ task.subject }}</span>
-                }
-              </div>
-            </div>
-            <div class="item-actions">
-              <button class="btn-edit" (click)="editTask(task)">ערוך</button>
-              <button class="btn-delete" (click)="deleteTask(task.id)">מחק</button>
-            </div>
+            }
           </div>
         }
       </div>

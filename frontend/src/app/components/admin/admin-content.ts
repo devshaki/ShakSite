@@ -6,12 +6,13 @@ import { ExamsService } from '../../services/exams.service';
 import { TasksService } from '../../services/tasks.service';
 import { NotificationService } from '../../services/notification.service';
 import { ValidationService } from '../../services/validation.service';
-import { FilterPipe } from '../../pipes/filter.pipe';
+import { FormBuilder } from '../form-builder/form-builder';
+import { FormConfig, FormSubmitEvent } from '../../models/form-builder.models';
 
 @Component({
   selector: 'app-admin-content',
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterPipe],
+  imports: [CommonModule, FormsModule, FormBuilder],
   templateUrl: './admin-content.html',
   styleUrl: './admin-content.scss',
 })
@@ -23,22 +24,123 @@ export class AdminContent {
   taskSearchTerm = signal('');
   taskFilterStatus = signal<'all' | 'incomplete' | 'completed'>('all');
 
-  // Exam form
-  newExamSubject = signal('');
-  newExamDate = signal('');
-  newExamTime = signal('');
-  newExamRoom = signal('');
-  newExamNotes = signal('');
-
-  // Task form
-  newTaskTitle = signal('');
-  newTaskDescription = signal('');
-  newTaskDueDate = signal('');
-  newTaskSubject = signal('');
-  newTaskPriority = signal<'low' | 'medium' | 'high'>('medium');
-
   editingExamId = signal<string | null>(null);
   editingTaskId = signal<string | null>(null);
+
+  // Form configurations
+  examFormConfig = signal<FormConfig>({
+    title: 'Exams Management',
+    titleIcon: '📝',
+    colorTheme: 'purple',
+    submitText: 'Add Exam',
+    sections: [
+      {
+        label: 'Exam Details',
+        icon: '📋',
+        fields: [
+          {
+            name: 'subject',
+            label: 'Subject',
+            type: 'text',
+            placeholder: 'Enter subject name...',
+            required: true,
+            icon: '📚'
+          },
+          {
+            name: 'date',
+            label: 'Exam Date',
+            type: 'date',
+            required: true,
+            icon: '📅'
+          },
+          {
+            name: 'time',
+            label: 'Exam Time',
+            type: 'time',
+            icon: '⏰',
+            hint: 'Optional'
+          },
+          {
+            name: 'room',
+            label: 'Room',
+            type: 'text',
+            placeholder: 'Enter room number...',
+            icon: '🚪',
+            hint: 'Optional'
+          },
+          {
+            name: 'notes',
+            label: 'Notes',
+            type: 'textarea',
+            placeholder: 'Additional notes...',
+            icon: '📝',
+            rows: 3,
+            hint: 'Optional'
+          }
+        ]
+      }
+    ]
+  });
+
+  taskFormConfig = signal<FormConfig>({
+    title: 'Tasks Management',
+    titleIcon: '✅',
+    colorTheme: 'green',
+    submitText: 'Add Task',
+    sections: [
+      {
+        label: 'Task Information',
+        icon: '📌',
+        fields: [
+          {
+            name: 'title',
+            label: 'Task Title',
+            type: 'text',
+            placeholder: 'Enter task title...',
+            required: true,
+            icon: '✏️'
+          },
+          {
+            name: 'description',
+            label: 'Description',
+            type: 'textarea',
+            placeholder: 'Describe the task...',
+            icon: '📄',
+            rows: 4,
+            hint: 'Optional'
+          },
+          {
+            name: 'dueDate',
+            label: 'Due Date',
+            type: 'date',
+            icon: '📅',
+            hint: 'Optional'
+          },
+          {
+            name: 'subject',
+            label: 'Subject',
+            type: 'text',
+            placeholder: 'Related subject...',
+            icon: '📚',
+            hint: 'Optional'
+          },
+          {
+            name: 'priority',
+            label: 'Priority',
+            type: 'select',
+            icon: '⚡',
+            required: true,
+            value: 'medium',
+            options: [
+              { label: 'Low', value: 'low' },
+              { label: 'Medium', value: 'medium' },
+              { label: 'High', value: 'high' }
+            ]
+          }
+        ]
+      }
+    ]
+  });
 
   constructor(
     private examsService: ExamsService,
@@ -68,30 +170,41 @@ export class AdminContent {
   }
 
   // Exam methods
-  addExam() {
-    const subject = this.newExamSubject().trim();
-    const date = this.newExamDate().trim();
-    const time = this.newExamTime().trim();
-    const room = this.newExamRoom().trim();
-
-    const validation = this.validationService.validateExamForm(subject, date, time, room);
+  handleExamSubmit(event: FormSubmitEvent) {
+    const data = event.data;
+    
+    const validation = this.validationService.validateExamForm(
+      data['subject'], 
+      data['date'], 
+      data['time'], 
+      data['room']
+    );
+    
     if (!validation.valid) {
       this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
-    const newExam = {
-      subject,
-      date,
-      time: time || undefined,
-      room: room || undefined,
-      notes: this.newExamNotes().trim() || undefined,
+    const examData = {
+      subject: data['subject'],
+      date: data['date'],
+      time: data['time'] || undefined,
+      room: data['room'] || undefined,
+      notes: data['notes'] || undefined,
     };
 
-    this.examsService.create(newExam).subscribe({
+    if (this.editingExamId()) {
+      this.updateExam(examData);
+    } else {
+      this.addExam(examData);
+    }
+  }
+
+  addExam(examData: any) {
+    this.examsService.create(examData).subscribe({
       next: (exam) => {
         this.exams.update((exams) => [...exams, exam]);
-        this.clearExamForm();
+        this.resetExamForm();
         this.notificationService.success('מבחן נוסף בהצלחה');
       },
       error: (err) => {
@@ -103,29 +216,28 @@ export class AdminContent {
 
   editExam(exam: ExamDate) {
     this.editingExamId.set(exam.id);
-    this.newExamSubject.set(exam.subject);
-    this.newExamDate.set(exam.date);
-    this.newExamTime.set(exam.time || '');
-    this.newExamRoom.set(exam.room || '');
-    this.newExamNotes.set(exam.notes || '');
+    // Update form config with exam data
+    this.examFormConfig.update(config => ({
+      ...config,
+      submitText: 'Update Exam',
+      sections: config.sections.map(section => ({
+        ...section,
+        fields: section.fields.map(field => ({
+          ...field,
+          value: (exam as any)[field.name] || field.value
+        }))
+      }))
+    }));
   }
 
-  updateExam() {
+  updateExam(examData: any) {
     const examId = this.editingExamId();
     if (!examId) return;
 
-    const updatedData = {
-      subject: this.newExamSubject().trim(),
-      date: this.newExamDate().trim(),
-      time: this.newExamTime().trim() || undefined,
-      room: this.newExamRoom().trim() || undefined,
-      notes: this.newExamNotes().trim() || undefined,
-    };
-
-    this.examsService.update(examId, updatedData).subscribe({
+    this.examsService.update(examId, examData).subscribe({
       next: (exam) => {
         this.exams.update((exams) => exams.map((e) => (e.id === examId ? exam : e)));
-        this.clearExamForm();
+        this.resetExamForm();
         this.notificationService.success('מבחן עודכן בהצלחה');
       },
       error: (err) => {
@@ -148,40 +260,57 @@ export class AdminContent {
     });
   }
 
-  clearExamForm() {
+  resetExamForm() {
     this.editingExamId.set(null);
-    this.newExamSubject.set('');
-    this.newExamDate.set('');
-    this.newExamTime.set('');
-    this.newExamRoom.set('');
-    this.newExamNotes.set('');
+    this.examFormConfig.update(config => ({
+      ...config,
+      submitText: 'Add Exam',
+      sections: config.sections.map(section => ({
+        ...section,
+        fields: section.fields.map(field => ({
+          ...field,
+          value: field.name === 'priority' ? 'medium' : ''
+        }))
+      }))
+    }));
   }
 
   // Task methods
-  addTask() {
-    const title = this.newTaskTitle().trim();
-    const dueDate = this.newTaskDueDate().trim();
-    const description = this.newTaskDescription().trim();
-
-    const validation = this.validationService.validateTaskForm(title, dueDate, description);
+  handleTaskSubmit(event: FormSubmitEvent) {
+    const data = event.data;
+    
+    const validation = this.validationService.validateTaskForm(
+      data['title'], 
+      data['dueDate'], 
+      data['description']
+    );
+    
     if (!validation.valid) {
       this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
-    const newTask = {
-      title,
-      dueDate,
-      description: description || undefined,
-      subject: this.newTaskSubject().trim() || undefined,
-      priority: this.newTaskPriority(),
+    const taskData = {
+      title: data['title'],
+      dueDate: data['dueDate'],
+      description: data['description'] || undefined,
+      subject: data['subject'] || undefined,
+      priority: data['priority'] as 'low' | 'medium' | 'high',
       completed: false,
     };
 
-    this.tasksService.create(newTask).subscribe({
+    if (this.editingTaskId()) {
+      this.updateTask(taskData);
+    } else {
+      this.addTask(taskData);
+    }
+  }
+
+  addTask(taskData: any) {
+    this.tasksService.create(taskData).subscribe({
       next: (task) => {
         this.tasks.update((tasks) => [...tasks, task]);
-        this.clearTaskForm();
+        this.resetTaskForm();
         this.notificationService.success('משימה נוספה בהצלחה');
       },
       error: (err) => {
@@ -193,29 +322,28 @@ export class AdminContent {
 
   editTask(task: Task) {
     this.editingTaskId.set(task.id);
-    this.newTaskTitle.set(task.title);
-    this.newTaskDescription.set(task.description || '');
-    this.newTaskDueDate.set(task.dueDate);
-    this.newTaskSubject.set(task.subject || '');
-    this.newTaskPriority.set(task.priority || 'medium');
+    // Update form config with task data
+    this.taskFormConfig.update(config => ({
+      ...config,
+      submitText: 'Update Task',
+      sections: config.sections.map(section => ({
+        ...section,
+        fields: section.fields.map(field => ({
+          ...field,
+          value: (task as any)[field.name] || field.value
+        }))
+      }))
+    }));
   }
 
-  updateTask() {
+  updateTask(taskData: any) {
     const taskId = this.editingTaskId();
     if (!taskId) return;
 
-    const updatedData = {
-      title: this.newTaskTitle().trim(),
-      description: this.newTaskDescription().trim() || undefined,
-      dueDate: this.newTaskDueDate().trim(),
-      subject: this.newTaskSubject().trim() || undefined,
-      priority: this.newTaskPriority(),
-    };
-
-    this.tasksService.update(taskId, updatedData).subscribe({
+    this.tasksService.update(taskId, taskData).subscribe({
       next: (task) => {
         this.tasks.update((tasks) => tasks.map((t) => (t.id === taskId ? task : t)));
-        this.clearTaskForm();
+        this.resetTaskForm();
         this.notificationService.success('משימה עודכנה בהצלחה');
       },
       error: (err) => {
@@ -257,11 +385,21 @@ export class AdminContent {
 
   clearTaskForm() {
     this.editingTaskId.set(null);
-    this.newTaskTitle.set('');
-    this.newTaskDescription.set('');
-    this.newTaskDueDate.set('');
-    this.newTaskSubject.set('');
-    this.newTaskPriority.set('medium');
+    this.taskFormConfig.update(config => ({
+      ...config,
+      submitText: 'Add Task',
+      sections: config.sections.map(section => ({
+        ...section,
+        fields: section.fields.map(field => ({
+          ...field,
+          value: field.name === 'priority' ? 'medium' : ''
+        }))
+      }))
+    }));
+  }
+
+  resetTaskForm() {
+    this.clearTaskForm();
   }
 
   getFilteredExams(): ExamDate[] {

@@ -6,19 +6,53 @@ import { Quote } from '../../models/content.models';
 import { QuotesService } from '../../services/quotes.service';
 import { NotificationService } from '../../services/notification.service';
 import { ValidationService } from '../../services/validation.service';
+import { FormBuilder } from '../form-builder/form-builder';
+import { FormConfig, FormSubmitEvent } from '../../models/form-builder.models';
 
 @Component({
   selector: 'app-admin-quotes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FormBuilder],
   templateUrl: './admin-quotes.html',
   styleUrl: './admin-quotes.scss',
 })
 export class AdminQuotes {
   quotes = signal<Quote[]>([]);
-  newQuoteText = signal('');
-  newQuoteAuthor = signal('');
   searchTerm = signal('');
+
+  // Form configuration
+  quoteFormConfig = signal<FormConfig>({
+    title: 'Quotes Management',
+    titleIcon: '💬',
+    colorTheme: 'green',
+    submitText: 'Add Quote',
+    sections: [
+      {
+        label: 'Quote Details',
+        icon: '✍️',
+        fields: [
+          {
+            name: 'text',
+            label: 'Quote Text',
+            type: 'textarea',
+            placeholder: 'Enter the quote text...',
+            required: true,
+            icon: '💬',
+            rows: 5,
+            hint: 'The main text of the quote'
+          },
+          {
+            name: 'author',
+            label: 'Author',
+            type: 'text',
+            placeholder: 'Who said this?',
+            icon: '✒️',
+            hint: 'Optional - leave empty for anonymous'
+          }
+        ]
+      }
+    ]
+  });
 
   constructor(
     private quotesService: QuotesService,
@@ -39,27 +73,25 @@ export class AdminQuotes {
     });
   }
 
-  addQuote() {
-    const text = this.newQuoteText().trim();
-    const author = this.newQuoteAuthor().trim();
-
-    const validation = this.validationService.validateQuoteForm(text, author);
+  handleQuoteSubmit(event: FormSubmitEvent) {
+    const data = event.data;
+    
+    const validation = this.validationService.validateQuoteForm(data['text'], data['author']);
     if (!validation.valid) {
       this.notificationService.warning(validation.error || 'שגיאת ולידציה');
       return;
     }
 
     const newQuote = {
-      text,
-      author: author || undefined,
+      text: data['text'],
+      author: data['author'] || undefined,
       addedDate: new Date().toISOString(),
     };
 
     this.quotesService.create(newQuote).subscribe({
       next: (quote) => {
         this.quotes.update((quotes) => [...quotes, quote]);
-        this.newQuoteText.set('');
-        this.newQuoteAuthor.set('');
+        this.resetQuoteForm();
         this.notificationService.success('ציטוט נוסף בהצלחה');
       },
       error: (err) => {
@@ -67,6 +99,19 @@ export class AdminQuotes {
         this.notificationService.error('הוספת ציטוט נכשלה');
       },
     });
+  }
+
+  resetQuoteForm() {
+    this.quoteFormConfig.update(config => ({
+      ...config,
+      sections: config.sections.map(section => ({
+        ...section,
+        fields: section.fields.map(field => ({
+          ...field,
+          value: ''
+        }))
+      }))
+    }));
   }
 
   deleteQuote(id: string) {

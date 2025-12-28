@@ -1,0 +1,131 @@
+<div class="form-builder" [ngClass]="getThemeClass()">
+  <div class="form-container">
+    <!-- Form Header -->
+    <div class="form-header">
+      <span class="form-icon">{{ config().titleIcon }}</span>
+      <h3>{{ config().title }}</h3>
+    </div>
+
+    <!-- Form Sections -->
+    @for (section of config().sections; track section.label) {
+      <div class="form-section">
+        <!-- Section Label -->
+        <div class="section-label">
+          <span class="section-icon">{{ section.icon }}</span>
+          <span>{{ section.label }}</span>
+        </div>
+
+        <!-- Form Fields -->
+        @for (field of section.fields; track field.name) {
+          <div class="form-group">
+            <!-- Field Label -->
+            <label [class.required]="field.required">
+              @if (field.icon) {
+                <span class="field-icon">{{ field.icon }}</span>
+              }
+              {{ field.label }}
+            </label>
+
+            <!-- Text Input -->
+            @if (field.type === 'text' || field.type === 'email') {
+              <input
+                [type]="field.type"
+                [placeholder]="field.placeholder || ''"
+                [required]="field.required || false"
+                [value]="getFieldValue(field.name)"
+                (input)="updateField(field.name, $any($event.target).value)"
+              />
+            }
+
+            <!-- Textarea -->
+            @if (field.type === 'textarea') {
+              <textarea
+                [placeholder]="field.placeholder || ''"
+                [required]="field.required || false"
+                [rows]="field.rows || 4"
+                [value]="getFieldValue(field.name)"
+                (input)="updateField(field.name, $any($event.target).value)"
+              ></textarea>
+            }
+
+            <!-- Number Input -->
+            @if (field.type === 'number') {
+              <input
+                type="number"
+                [placeholder]="field.placeholder || ''"
+                [required]="field.required || false"
+                [min]="field.min"
+                [max]="field.max"
+                [value]="getFieldValue(field.name)"
+                (input)="updateField(field.name, $any($event.target).valueAsNumber)"
+              />
+            }
+
+            <!-- Date Input -->
+            @if (field.type === 'date') {
+              <input
+                type="date"
+                [required]="field.required || false"
+                [min]="field.min"
+                [max]="field.max"
+                [value]="getFieldValue(field.name)"
+                (input)="updateField(field.name, $any($event.target).value)"
+              />
+            }
+
+            <!-- Time Input -->
+            @if (field.type === 'time') {
+              <input
+                type="time"
+                [required]="field.required || false"
+                [value]="getFieldValue(field.name)"
+                (input)="updateField(field.name, $any($event.target).value)"
+              />
+            }
+
+            <!-- Select Dropdown -->
+            @if (field.type === 'select') {
+              <select
+                [required]="field.required || false"
+                [value]="getFieldValue(field.name)"
+                (change)="updateField(field.name, $any($event.target).value)"
+              >
+                <option value="">{{ field.placeholder || 'Select an option' }}</option>
+                @for (option of field.options; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            }
+
+            <!-- Field Hint -->
+            @if (field.hint) {
+              <span class="input-hint">{{ field.hint }}</span>
+            }
+
+            <!-- Validation Error -->
+            @if (field.required && !isFieldValid(field)) {
+              <span class="field-error">This field is required</span>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      @if (config().showCancel) {
+        <button type="button" class="cancel-btn" (click)="handleCancel()">
+          {{ config().cancelText || 'Cancel' }}
+        </button>
+      }
+      <button 
+        type="submit" 
+        class="submit-btn" 
+        [disabled]="!isFormValid()"
+        (click)="handleSubmit()"
+      >
+        {{ config().submitText || 'Submit' }}
+      </button>
+    </div>
+  </div>
+</div>

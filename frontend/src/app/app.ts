@@ -2,11 +2,12 @@ import { Component, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from './components/toast/toast';
 import { LoadingIndicator } from './components/loading-indicator/loading-indicator';
+import { Navbar } from './components/navbar/navbar';
 import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Toast, LoadingIndicator],
+  imports: [RouterOutlet, Toast, LoadingIndicator, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

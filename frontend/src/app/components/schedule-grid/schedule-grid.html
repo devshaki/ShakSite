@@ -28,7 +28,7 @@
   <div class="info-cards">
     @if (upcomingExams().length > 0) {
       <div class="info-card exams-card">
-        <h3>📚 מבחנים קרובים</h3>
+        <h3>מבחנים קרובים</h3>
         @for (exam of upcomingExams(); track exam.id) {
           <div class="info-item">
             <div class="info-title">{{ exam.subject }}</div>

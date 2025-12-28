@@ -1,62 +1,12 @@
 <div class="page-container">
-  <header class="page-header">
-    <button class="back-btn" (click)="router.navigate(['/'])">
-      ← חזרה לדף הבית
-    </button>
-    <h1>💬 ציטוטים לדף הראשי</h1>
-    <div class="spacer"></div>
-  </header>
-
 <div class="admin-quotes">
   <p class="page-description">הוסף ציטוטים שיוצגו ברוטציה בראש העמוד הראשי (כמו "הסוויש הוא שקוף")</p>
   
-  <div class="add-quote-section">
-    <div class="form-header">
-      <span class="form-icon">💬</span>
-      <h3>הוספת ציטוט חדש</h3>
-    </div>
-    
-    <div class="form-section">
-      <div class="section-label">
-        <span class="section-icon">📝</span>
-        <span>תוכן הציטוט</span>
-      </div>
-      
-      <div class="form-group">
-        <label for="quoteText">✍️ טקסט הציטוט:</label>
-        <textarea 
-          id="quoteText"
-          [(ngModel)]="newQuoteText"
-          placeholder="לדוגמה: 'הסוויש הוא שקוף' או 'זה לא באג, זו פיצ'ר'..."
-          rows="4"
-        ></textarea>
-        <span class="input-hint">💡 ציטוט מצחיק או מעורר השראה מהשיעורים</span>
-      </div>
-    </div>
-    
-    <div class="form-section">
-      <div class="section-label">
-        <span class="section-icon">👤</span>
-        <span>מקור הציטוט</span>
-      </div>
-      
-      <div class="form-group">
-        <label for="quoteAuthor">✏️ מחבר (אופציונלי):</label>
-        <input 
-          id="quoteAuthor"
-          type="text"
-          [(ngModel)]="newQuoteAuthor"
-          placeholder="שם המרצה, התלמיד, או השאר ריק..."
-        />
-        <span class="input-hint">💭 אפשר להשאיר ריק עבור ציטוט אנונימי</span>
-      </div>
-    </div>
-    
-    <button class="btn-add" (click)="addQuote()">
-      <span class="btn-icon">➕</span>
-      <span>הוסף ציטוט</span>
-    </button>
-  </div>
+  <!-- Quote Form using Form Builder -->
+  <app-form-builder
+    [config]="quoteFormConfig()"
+    (formSubmit)="handleQuoteSubmit($event)"
+  />
 
   <div class="quotes-list">
     <h3>ציטוטים קיימים ({{ quotes().length }})</h3>
