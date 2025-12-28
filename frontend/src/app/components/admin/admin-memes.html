@@ -80,7 +80,7 @@
 
     <div class="grid-container">
       @for (meme of memes(); track meme.id) {
-        <div class="meme-card">
+        <div class="meme-card" (click)="openModal(meme)">
           <img 
             [src]="getMemeUrl(meme.filename)" 
             [alt]="meme.caption || 'מם'"
@@ -99,11 +99,38 @@
               }
               <span class="uploaded-date">{{ meme.uploadedAt | date: 'dd/MM/yy' }}</span>
             </div>
-            <button class="btn-delete-meme" (click)="deleteMeme(meme.id)">🗑️ מחק</button>
+            <button class="btn-delete-meme" (click)="deleteMeme(meme.id); $event.stopPropagation()">🗑️ מחק</button>
           </div>
         </div>
       }
     </div>
   </div>
 </div>
+
+<!-- Fullscreen Modal -->
+@if (showModal() && selectedMeme()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeModal()">✕</button>
+      
+      <img 
+        [src]="getMemeUrl(selectedMeme()!.filename)" 
+        [alt]="selectedMeme()!.caption || 'מם'"
+        class="modal-image"
+      />
+      
+      <div class="modal-info">
+        @if (selectedMeme()!.caption) {
+          <p class="modal-caption">{{ selectedMeme()!.caption }}</p>
+        }
+        <div class="modal-meta">
+          @if (selectedMeme()!.uploadedBy) {
+            <span class="modal-uploaded-by">👤 {{ selectedMeme()!.uploadedBy }}</span>
+          }
+          <span class="modal-uploaded-date">{{ selectedMeme()!.uploadedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+}
 </div>

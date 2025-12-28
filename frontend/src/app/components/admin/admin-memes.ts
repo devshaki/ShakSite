@@ -25,6 +25,10 @@ export class AdminMemes {
   previewUrl = signal<string | null>(null);
   searchTerm = signal('');
   showOnlyFavorites = signal(false);
+  
+  // Modal state for fullscreen viewer
+  showModal = signal(false);
+  selectedMeme = signal<Meme | null>(null);
 
   private readonly apiUrl = `${environment.apiUrl}/memes`;
 
@@ -168,5 +172,19 @@ export class AdminMemes {
       errorDiv.textContent = `שגיאה בטעינת תמונה: ${meme.filename}`;
       parent.appendChild(errorDiv);
     }
+  }
+  
+  openModal(meme: Meme): void {
+    this.selectedMeme.set(meme);
+    this.showModal.set(true);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+  
+  closeModal(): void {
+    this.showModal.set(false);
+    this.selectedMeme.set(null);
+    // Restore body scroll
+    document.body.style.overflow = '';
   }
 }
