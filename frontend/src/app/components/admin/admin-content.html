@@ -7,56 +7,80 @@
       <h3>מבחנים</h3>
       
       <div class="form-container">
-        <h4>{{ editingExamId() ? 'עריכת מבחן' : 'הוספת מבחן חדש' }}</h4>
+        <div class="form-header">
+          <span class="form-icon">📝</span>
+          <h4>{{ editingExamId() ? '✏️ עריכת מבחן' : '➕ הוספת מבחן חדש' }}</h4>
+        </div>
         
-        <div class="form-group">
-          <label for="examSubject">מקצוע:</label>
-          <input 
-            id="examSubject"
-            type="text"
-            [(ngModel)]="newExamSubject"
-            placeholder="שם המקצוע"
-          />
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="examDate">תאריך:</label>
-            <input 
-              id="examDate"
-              type="date"
-              [(ngModel)]="newExamDate"
-            />
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">📚</span>
+            <span>פרטי המבחן</span>
           </div>
-
+          
           <div class="form-group">
-            <label for="examTime">שעה (אופציונלי):</label>
+            <label for="examSubject">📖 מקצוע:</label>
             <input 
-              id="examTime"
-              type="time"
-              [(ngModel)]="newExamTime"
+              id="examSubject"
+              type="text"
+              [(ngModel)]="newExamSubject"
+              placeholder="לדוגמה: מתמטיקה, אנגלית..."
             />
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="examRoom">חדר (אופציונלי):</label>
-          <input 
-            id="examRoom"
-            type="text"
-            [(ngModel)]="newExamRoom"
-            placeholder="מיקום המבחן"
-          />
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">🕐</span>
+            <span>מועד ומיקום</span>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="examDate">📅 תאריך:</label>
+              <input 
+                id="examDate"
+                type="date"
+                [(ngModel)]="newExamDate"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="examTime">⏰ שעה (אופציונלי):</label>
+              <input 
+                id="examTime"
+                type="time"
+                [(ngModel)]="newExamTime"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="examRoom">📍 חדר (אופציונלי):</label>
+            <input 
+              id="examRoom"
+              type="text"
+              [(ngModel)]="newExamRoom"
+              placeholder="מיקום המבחן"
+            />
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="examNotes">הערות (אופציונלי):</label>
-          <textarea 
-            id="examNotes"
-            [(ngModel)]="newExamNotes"
-            placeholder="פרטים נוספים"
-            rows="2"
-          ></textarea>
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">💭</span>
+            <span>הערות נוספות</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="examNotes">📝 הערות (אופציונלי):</label>
+            <textarea 
+              id="examNotes"
+              [(ngModel)]="newExamNotes"
+              placeholder="פרטים נוספים על המבחן..."
+              rows="3"
+            ></textarea>
+          </div>
         </div>
 
         <div class="form-actions">
@@ -114,56 +138,73 @@
       <h3>מטלות</h3>
       
       <div class="form-container">
-        <h4>{{ editingTaskId() ? 'עריכת מטלה' : 'הוספת מטלה חדשה' }}</h4>
+        <div class="form-header">
+          <span class="form-icon">✅</span>
+          <h4>{{ editingTaskId() ? '✏️ עריכת מטלה' : '➕ הוספת מטלה חדשה' }}</h4>
+        </div>
         
-        <div class="form-group">
-          <label for="taskTitle">כותרת:</label>
-          <input 
-            id="taskTitle"
-            type="text"
-            [(ngModel)]="newTaskTitle"
-            placeholder="שם המטלה"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="taskDescription">תיאור (אופציונלי):</label>
-          <textarea 
-            id="taskDescription"
-            [(ngModel)]="newTaskDescription"
-            placeholder="פרטים על המטלה"
-            rows="2"
-          ></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="taskDueDate">תאריך הגשה:</label>
-            <input 
-              id="taskDueDate"
-              type="date"
-              [(ngModel)]="newTaskDueDate"
-            />
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">📋</span>
+            <span>פרטי המטלה</span>
           </div>
-
+          
           <div class="form-group">
-            <label for="taskSubject">מקצוע (אופציונלי):</label>
+            <label for="taskTitle">📌 כותרת:</label>
             <input 
-              id="taskSubject"
+              id="taskTitle"
               type="text"
-              [(ngModel)]="newTaskSubject"
-              placeholder="מקצוע"
+              [(ngModel)]="newTaskTitle"
+              placeholder="לדוגמה: תרגיל בית, עבודה מסכמת..."
             />
+          </div>
+
+          <div class="form-group">
+            <label for="taskDescription">📄 תיאור (אופציונלי):</label>
+            <textarea 
+              id="taskDescription"
+              [(ngModel)]="newTaskDescription"
+              placeholder="פרטים על המטלה..."
+              rows="3"
+            ></textarea>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="taskPriority">עדיפות:</label>
-          <select id="taskPriority" [(ngModel)]="newTaskPriority">
-            <option value="low">נמוכה</option>
-            <option value="medium">בינונית</option>
-            <option value="high">גבוהה</option>
-          </select>
+        <div class="form-section">
+          <div class="section-label">
+            <span class="section-icon">🎯</span>
+            <span>פרטים נוספים</span>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="taskDueDate">📅 תאריך הגשה:</label>
+              <input 
+                id="taskDueDate"
+                type="date"
+                [(ngModel)]="newTaskDueDate"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="taskSubject">📚 מקצוע (אופציונלי):</label>
+              <input 
+                id="taskSubject"
+                type="text"
+                [(ngModel)]="newTaskSubject"
+                placeholder="מקצוע"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="taskPriority">⚡ עדיפות:</label>
+            <select id="taskPriority" [(ngModel)]="newTaskPriority">
+              <option value="low">🟢 נמוכה - אפשר להמתין</option>
+              <option value="medium">🟡 בינונית - חשוב</option>
+              <option value="high">🔴 גבוהה - דחוף!</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-actions">
