@@ -152,4 +152,4 @@ For better scalability, consider:
 - Redis for caching
 - Automated backups
 
-See `DIGITALOCEAN_PERSISTENT_STORAGE.md` for database migration path.
+See `DIGITALOCEAN_PERSISTENT_STORAGE.md` for database migration path
