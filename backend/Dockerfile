@@ -32,7 +32,11 @@ COPY --from=backend-builder /backend/node_modules ./node_modules
 # Copy frontend build to public folder (served by NestJS)
 COPY --from=frontend-builder /frontend/dist/class-schedule/browser ./public
 
-# Create necessary directories
+# Copy init script
+COPY backend/init-data.sh ./init-data.sh
+RUN chmod +x ./init-data.sh
+
+# Create necessary directories (for local dev)
 RUN mkdir -p uploads/memes data
 
 # Set production environment
@@ -41,5 +45,5 @@ ENV NODE_ENV=production
 # Expose port
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "start:prod"]
+# Start the application with init script
+CMD ["sh", "-c", "./init-data.sh && npm run start:prod"]

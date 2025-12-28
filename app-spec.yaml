@@ -1,0 +1,53 @@
+name: shaksite
+region: nyc
+
+services:
+- name: web
+  # Build from repository root using backend Dockerfile
+  dockerfile_path: backend/Dockerfile
+  
+  github:
+    repo: YOUR_USERNAME/ShakSite
+    branch: main
+    deploy_on_push: true
+  
+  http_port: 3000
+  
+  environment_slug: node-js
+  
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  
+  # Health check
+  health_check:
+    http_path: /api/quotes
+    initial_delay_seconds: 30
+    period_seconds: 30
+    timeout_seconds: 10
+    success_threshold: 1
+    failure_threshold: 3
+  
+  # Environment variables for persistent storage
+  envs:
+  - key: DATA_DIR
+    value: /data
+  - key: UPLOADS_DIR
+    value: /data/uploads
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    value: "3000"
+  
+  # Mount the persistent volume
+  volumes:
+  - name: shaksite-data
+    mount_path: /data
+  
+  routes:
+  - path: /
+
+# Define persistent volume for data storage
+volumes:
+- name: shaksite-data
+  size_gigabytes: 10
+  # All data (memes, quotes, exams, tasks, uploads) will persist here

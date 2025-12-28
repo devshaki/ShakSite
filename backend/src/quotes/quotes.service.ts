@@ -5,7 +5,10 @@ import * as path from 'path';
 
 @Injectable()
 export class QuotesService {
-  private readonly dataPath = path.join(__dirname, '../../data/quotes.json');
+  private readonly dataPath = path.join(
+    process.env.DATA_DIR || path.join(__dirname, '../../data'),
+    'quotes.json'
+  );
 
   constructor() {
     this.ensureDataFile();

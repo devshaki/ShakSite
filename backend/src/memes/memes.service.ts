@@ -5,8 +5,14 @@ import * as path from 'path';
 
 @Injectable()
 export class MemesService {
-  private readonly dataPath = path.join(__dirname, '../../data/memes.json');
-  private readonly uploadsDir = path.join(__dirname, '../../uploads/memes');
+  private readonly dataPath = path.join(
+    process.env.DATA_DIR || path.join(__dirname, '../../data'),
+    'memes.json'
+  );
+  private readonly uploadsDir = path.join(
+    process.env.UPLOADS_DIR || path.join(__dirname, '../../uploads'),
+    'memes'
+  );
 
   constructor() {
     this.ensureDirectories();

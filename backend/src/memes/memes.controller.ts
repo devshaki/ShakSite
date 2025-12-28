@@ -31,8 +31,11 @@ export class MemesController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          // Use absolute path from app root
-          const uploadPath = join(process.cwd(), 'uploads', 'memes');
+          // Use environment variable or default path
+          const uploadPath = join(
+            process.env.UPLOADS_DIR || join(process.cwd(), 'uploads'),
+            'memes'
+          );
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
@@ -76,7 +79,11 @@ export class MemesController {
 
   @Get('image/:filename')
   async getImage(@Param('filename') filename: string, @Res() res: Response) {
-    const filePath = join(process.cwd(), 'uploads', 'memes', filename);
+    const filePath = join(
+      process.env.UPLOADS_DIR || join(process.cwd(), 'uploads'),
+      'memes',
+      filename
+    );
     console.log('Attempting to serve image from:', filePath);
     console.log('File exists:', existsSync(filePath));
     
@@ -90,7 +97,10 @@ export class MemesController {
   @Get('debug/files')
   async debugFiles() {
     const { readdirSync } = require('fs');
-    const uploadPath = join(process.cwd(), 'uploads', 'memes');
+    const uploadPath = join(
+      process.env.UPLOADS_DIR || join(process.cwd(), 'uploads'),
+      'memes'
+    );
     try {
       const files = readdirSync(uploadPath);
       return {

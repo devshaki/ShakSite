@@ -15,7 +15,7 @@ import { MemesModule } from './memes/memes.module';
     }),
     // Serve uploaded files from app root
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'uploads'),
+      rootPath: process.env.UPLOADS_DIR || join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
     QuotesModule,
