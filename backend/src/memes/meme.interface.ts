@@ -5,4 +5,7 @@ export interface Meme {
   uploadedBy?: string;
   uploadedAt: string;
   caption?: string;
+  upvotes: number;
+  downvotes: number;
+  score: number;
 }

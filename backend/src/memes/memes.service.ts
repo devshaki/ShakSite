@@ -44,11 +44,14 @@ export class MemesService {
     return this.readData();
   }
 
-  create(memeData: Omit<Meme, 'id'>): Meme {
+  create(memeData: Omit<Meme, 'id' | 'upvotes' | 'downvotes' | 'score'>): Meme {
     const memes = this.readData();
     const newMeme: Meme = {
       ...memeData,
       id: Date.now().toString(),
+      upvotes: 0,
+      downvotes: 0,
+      score: 0,
     };
     memes.push(newMeme);
     this.writeData(memes);
@@ -61,15 +64,37 @@ export class MemesService {
 
     if (!meme) return false;
 
-    // Delete the file
     const filePath = path.join(this.uploadsDir, meme.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
 
-    // Remove from data
     const filtered = memes.filter((m) => m.id !== id);
     this.writeData(filtered);
     return true;
+  }
+
+  vote(id: string, voteType: 'up' | 'down'): Meme | null {
+    const memes = this.readData();
+    const meme = memes.find((m) => m.id === id);
+
+    if (!meme) return null;
+
+    if (voteType === 'up') {
+      meme.upvotes++;
+    } else {
+      meme.downvotes++;
+    }
+
+    meme.score = meme.upvotes - meme.downvotes;
+    this.writeData(memes);
+    return meme;
+  }
+
+  getHallOfFame(limit: number = 10): Meme[] {
+    const memes = this.readData();
+    return memes
+      .sort((a, b) => b.score - a.score)
+      .slice(0, limit);
   }
 }

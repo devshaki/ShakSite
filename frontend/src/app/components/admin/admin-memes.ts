@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { NotificationService } from '../../services/notification.service';
 import { ValidationService } from '../../services/validation.service';
 import { FavoritesService } from '../../services/favorites.service';
+import { VotingService } from '../../services/voting.service';
 
 @Component({
   selector: 'app-admin-memes',
@@ -25,8 +26,9 @@ export class AdminMemes {
   previewUrl = signal<string | null>(null);
   searchTerm = signal('');
   showOnlyFavorites = signal(false);
-  
-  // Modal state for fullscreen viewer
+  showHallOfFame = signal(false);
+  hallOfFameMemes = signal<Meme[]>([]);
+
   showModal = signal(false);
   selectedMeme = signal<Meme | null>(null);
 
@@ -37,7 +39,8 @@ export class AdminMemes {
     public router: Router,
     private notificationService: NotificationService,
     private validationService: ValidationService,
-    public favoritesService: FavoritesService
+    public favoritesService: FavoritesService,
+    public votingService: VotingService
   ) {
     this.loadMemes();
   }
@@ -184,7 +187,51 @@ export class AdminMemes {
   closeModal(): void {
     this.showModal.set(false);
     this.selectedMeme.set(null);
-    // Restore body scroll
     document.body.style.overflow = '';
+  }
+
+  vote(memeId: string, voteType: 'up' | 'down'): void {
+    const currentVote = this.votingService.getUserVote(memeId);
+
+    if (currentVote === voteType) {
+      this.notificationService.warning('כבר הצבעת על מם זה');
+      return;
+    }
+
+    this.votingService.vote(memeId, voteType).subscribe({
+      next: (updatedMeme) => {
+        this.memes.update(memes =>
+          memes.map(m => m.id === memeId ? updatedMeme : m)
+        );
+        this.notificationService.success(
+          voteType === 'up' ? 'הצבעה חיובית נרשמה' : 'הצבעה שלילית נרשמה'
+        );
+
+        if (this.showHallOfFame()) {
+          this.loadHallOfFame();
+        }
+      },
+      error: (err) => {
+        console.error('Vote failed:', err);
+        this.notificationService.error('ההצבעה נכשלה');
+      }
+    });
+  }
+
+  toggleHallOfFame(): void {
+    this.showHallOfFame.update(show => !show);
+    if (this.showHallOfFame()) {
+      this.loadHallOfFame();
+    }
+  }
+
+  loadHallOfFame(): void {
+    this.votingService.getHallOfFame().subscribe({
+      next: (memes) => this.hallOfFameMemes.set(memes),
+      error: (err) => {
+        console.error('Failed to load hall of fame:', err);
+        this.notificationService.error('טעינת היכל התהילה נכשלה');
+      }
+    });
   }
 }

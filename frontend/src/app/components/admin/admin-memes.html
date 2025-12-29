@@ -64,24 +64,54 @@
   </div>
 
   <div class="memes-grid">
-    <h3>ממים ({{ memes().length }})</h3>
-    
+    <div class="grid-header">
+      <h3>ממים ({{ memes().length }})</h3>
+      <button class="btn-hall-of-fame" (click)="toggleHallOfFame()">
+        {{ showHallOfFame() ? '📋 כל הממים' : '🏆 היכל התהילה' }}
+      </button>
+    </div>
+
     @if (memes().length === 0) {
       <p class="empty-state">עדיין אין ממים. העלה את הראשון!</p>
     }
 
     <div class="grid-container">
-      @for (meme of memes(); track meme.id) {
-        <div class="meme-card" (click)="openModal(meme)">
-          <img 
-            [src]="getMemeUrl(meme.filename)" 
+      @for (meme of showHallOfFame() ? hallOfFameMemes() : memes(); track meme.id; let index = $index) {
+        <div class="meme-card">
+          @if (showHallOfFame()) {
+            <div class="hall-of-fame-badge">{{ index + 1 }}</div>
+          }
+
+          <div class="meme-voting" (click)="$event.stopPropagation()">
+            <button
+              class="btn-vote btn-upvote"
+              [class.voted]="votingService.getUserVote(meme.id) === 'up'"
+              (click)="vote(meme.id, 'up')"
+            >
+              ▲
+            </button>
+            <span class="vote-score" [class.positive]="meme.score > 0" [class.negative]="meme.score < 0">
+              {{ meme.score }}
+            </span>
+            <button
+              class="btn-vote btn-downvote"
+              [class.voted]="votingService.getUserVote(meme.id) === 'down'"
+              (click)="vote(meme.id, 'down')"
+            >
+              ▼
+            </button>
+          </div>
+
+          <img
+            [src]="getMemeUrl(meme.filename)"
             [alt]="meme.caption || 'מם'"
             class="meme-image"
             (error)="onImageError($event, meme)"
+            (click)="openModal(meme)"
             loading="lazy"
           />
-          
-          <div class="meme-overlay">
+
+          <div class="meme-overlay" (click)="openModal(meme)">
             @if (meme.caption) {
               <p class="meme-caption">{{ meme.caption }}</p>
             }

@@ -118,6 +118,23 @@ export class MemesController {
     }
   }
 
+  @Get('hall-of-fame')
+  getHallOfFame(): Meme[] {
+    return this.memesService.getHallOfFame();
+  }
+
+  @Post(':id/vote')
+  vote(
+    @Param('id') id: string,
+    @Body('voteType') voteType: 'up' | 'down'
+  ): Meme {
+    const meme = this.memesService.vote(id, voteType);
+    if (!meme) {
+      throw new Error('Meme not found');
+    }
+    return meme;
+  }
+
   @Delete(':id')
   delete(@Param('id') id: string): { success: boolean } {
     const success = this.memesService.delete(id);

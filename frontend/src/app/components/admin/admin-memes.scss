@@ -190,6 +190,31 @@
   }
 
   .memes-grid {
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+
+      .btn-hall-of-fame {
+        background: var(--ctp-yellow);
+        color: var(--ctp-crust);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 2px 8px rgba(249, 226, 175, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(249, 226, 175, 0.4);
+        }
+      }
+    }
+
     .empty-state {
       text-align: center;
       color: var(--ctp-subtext0);
@@ -212,7 +237,6 @@
         background: var(--ctp-surface0);
         border: 2px solid var(--ctp-surface1);
         transition: all 0.3s;
-        cursor: pointer;
 
         &:hover {
           transform: translateY(-6px);
@@ -224,12 +248,112 @@
           }
         }
 
+        .hall-of-fame-badge {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: var(--ctp-yellow);
+          color: var(--ctp-crust);
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 900;
+          font-size: 1.2rem;
+          z-index: 10;
+          box-shadow: 0 4px 12px rgba(249, 226, 175, 0.6);
+          border: 3px solid var(--ctp-surface0);
+        }
+
+        .meme-voting {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(8px);
+          padding: 0.5rem;
+          border-radius: 12px;
+          z-index: 10;
+          gap: 0.25rem;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+          .btn-vote {
+            background: var(--ctp-surface0);
+            border: 2px solid var(--ctp-surface1);
+            color: var(--ctp-text);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+
+            &.btn-upvote {
+              &:hover {
+                background: var(--ctp-green);
+                border-color: var(--ctp-green);
+                color: var(--ctp-crust);
+              }
+
+              &.voted {
+                background: var(--ctp-green);
+                border-color: var(--ctp-green);
+                color: var(--ctp-crust);
+              }
+            }
+
+            &.btn-downvote {
+              &:hover {
+                background: var(--ctp-red);
+                border-color: var(--ctp-red);
+                color: var(--ctp-crust);
+              }
+
+              &.voted {
+                background: var(--ctp-red);
+                border-color: var(--ctp-red);
+                color: var(--ctp-crust);
+              }
+            }
+          }
+
+          .vote-score {
+            color: var(--ctp-text);
+            font-weight: 900;
+            font-size: 1rem;
+            padding: 0.25rem 0;
+            min-width: 30px;
+            text-align: center;
+
+            &.positive {
+              color: var(--ctp-green);
+            }
+
+            &.negative {
+              color: var(--ctp-red);
+            }
+          }
+        }
+
         .meme-image {
           width: 100%;
           height: 350px;
           object-fit: cover;
           display: block;
           background: var(--ctp-mantle);
+          cursor: pointer;
         }
 
         .image-error {
@@ -253,6 +377,7 @@
           padding: 1.5rem;
           opacity: 0;
           transition: opacity 0.3s;
+          cursor: pointer;
 
           .meme-caption {
             color: #ffffff;
